@@ -1,0 +1,152 @@
+package com.alexbalmus.acbblog.modules.blog.dom.post;
+
+import java.util.Comparator;
+
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+import javax.persistence.Transient;
+import javax.persistence.UniqueConstraint;
+import javax.persistence.Version;
+
+import com.alexbalmus.acbblog.modules.blog.dom.blog.Blog;
+import com.alexbalmus.acbblog.modules.blog.types.Content;
+import com.alexbalmus.acbblog.modules.blog.types.Name;
+
+import org.apache.causeway.applib.annotation.*;
+import org.apache.causeway.applib.layout.LayoutConstants;
+import org.apache.causeway.applib.services.message.MessageService;
+import org.apache.causeway.applib.services.repository.RepositoryService;
+import org.apache.causeway.applib.services.title.TitleService;
+import org.apache.causeway.persistence.jpa.applib.integration.CausewayEntityListener;
+
+import lombok.Getter;
+import lombok.Setter;
+
+@Entity
+@Table(
+        schema="blog",
+        name = "Post",
+        uniqueConstraints = {
+                @UniqueConstraint(name = "Post__title__UNQ", columnNames = {"title"})
+        }
+)
+@EntityListeners(CausewayEntityListener.class) // injection support
+@Named("blog.Post")
+@DomainObject()
+@DomainObjectLayout()  // causes UI events to be triggered
+public class Post implements Comparable<Post> {
+
+    protected Post(){}
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(nullable = false, name = "id")
+    private Long id;
+
+    @Version
+    @Column(nullable = false, name = "version")
+    private int version;
+
+
+    public Post(final Blog blog, final String title, final String content) {
+        this.blog = blog;
+        this.title = title;
+        this.content = content;
+    }
+
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "blog_id")
+    @PropertyLayout(fieldSetId =  LayoutConstants.FieldSetId.IDENTITY, sequence = "1")
+    @Getter @Setter
+    private Blog blog;
+
+
+    @Column(length = Name.MAX_LEN, nullable = false, name = "title")
+    private String title;
+
+    @Title(prepend = "Object: ")
+    @Name
+    @PropertyLayout(fieldSetId = LayoutConstants.FieldSetId.IDENTITY, sequence = "2")
+    public String getTitle() {
+        return title;
+    }
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+
+
+    @Column(length = Content.MAX_LEN, nullable = false, name = "content")
+    private String content;
+
+    @Content
+    @PropertyLayout(fieldSetId = LayoutConstants.FieldSetId.DETAILS, sequence = "1")
+    public String getContent() {
+        return content;
+    }
+    public void setContent(String handle) {
+        this.content = handle;
+    }
+
+
+
+    @Action(
+            semantics = SemanticsOf.IDEMPOTENT,
+            executionPublishing = Publishing.ENABLED
+    )
+    @ActionLayout(
+            associateWith = "title",
+            describedAs = "Updates the object's title"
+    )
+    public Post updateTitle(
+            @Name final String name) {
+        setTitle(name);
+        return this;
+    }
+    public String default0UpdateTitle() {
+        return getTitle();
+    }
+
+
+
+    @Action(
+            semantics = SemanticsOf.NON_IDEMPOTENT_ARE_YOU_SURE
+    )
+    @ActionLayout(
+            fieldSetId = LayoutConstants.FieldSetId.IDENTITY,
+            describedAs = "Deletes this object from the database",
+            position = ActionLayout.Position.PANEL
+    )
+    public void delete() {
+        final String title = titleService.titleOf(this);
+        messageService.informUser(String.format("'%s' deleted", title));
+        repositoryService.removeAndFlush(this);
+    }
+
+
+
+    @Override
+    public String toString() {
+        return getTitle();
+    }
+
+    @Override
+    public int compareTo(final Post other) {
+        return Comparator.comparing(Post::getTitle).compare(this, other);
+    }
+
+
+    @Inject @Transient RepositoryService repositoryService;
+    @Inject @Transient TitleService titleService;
+    @Inject @Transient MessageService messageService;
+
+}

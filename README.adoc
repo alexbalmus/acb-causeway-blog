@@ -1,0 +1,3 @@
+Experimenting with Apache Causeway by creating a blogging platform.
+
+https://causeway.apache.org
