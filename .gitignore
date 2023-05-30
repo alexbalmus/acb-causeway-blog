@@ -23,3 +23,5 @@
 hs_err_pid*
 replay_pid*
 /acb-blog.iml
+/create-db-schema.sql
+*/target/*
