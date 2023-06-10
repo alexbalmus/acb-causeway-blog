@@ -66,9 +66,9 @@ public class Blog implements Comparable<Blog> {
     }
 
 
-    @OneToMany(mappedBy = "blog", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
-    @Getter @Setter
-    List<Post> posts = new ArrayList<>();
+//    @OneToMany(mappedBy = "blog", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+//    @Getter @Setter
+//    List<Post> posts = new ArrayList<>();
 
     @Column(length = Name.MAX_LEN, nullable = false, name = "name")
     private String name;
