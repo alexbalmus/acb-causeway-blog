@@ -14,11 +14,12 @@ import java.util.List;
 @Collection
 @CollectionLayout(defaultView = "table")
 @RequiredArgsConstructor
-public class Blog_posts {
-
+public class Blog_posts
+{
     private final Blog blog;
 
-    public List<Post> coll() {
+    public List<Post> coll()
+    {
         return postsRepository.findByBlog(blog);
     }
 

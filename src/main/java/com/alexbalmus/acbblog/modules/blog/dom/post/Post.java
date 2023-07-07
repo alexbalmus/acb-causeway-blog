@@ -34,18 +34,18 @@ import lombok.Setter;
 
 @Entity
 @Table(
-        schema="blog",
-        name = "Post",
-        uniqueConstraints = {
-                @UniqueConstraint(name = "Post__title__UNQ", columnNames = {"title"})
-        }
+    schema="blog",
+    name = "Post",
+    uniqueConstraints = {
+        @UniqueConstraint(name = "Post__title__UNQ", columnNames = {"title"})
+    }
 )
 @EntityListeners(CausewayEntityListener.class) // injection support
 @Named("blog.Post")
 @DomainObject()
 @DomainObjectLayout()  // causes UI events to be triggered
-public class Post implements Comparable<Post> {
-
+public class Post implements Comparable<Post>
+{
     protected Post(){}
 
     @Id
@@ -58,7 +58,8 @@ public class Post implements Comparable<Post> {
     private int version;
 
 
-    public Post(final Blog blog, final String title, final String content) {
+    public Post(final Blog blog, final String title, final String content)
+    {
         this.blog = blog;
         this.title = title;
         this.content = content;
@@ -77,13 +78,15 @@ public class Post implements Comparable<Post> {
     @Title(prepend = "Object: ")
     @Name
     @PropertyLayout(fieldSetId = LayoutConstants.FieldSetId.IDENTITY, sequence = "2")
-    public String getTitle() {
+    public String getTitle()
+    {
         return title;
     }
-    public void setTitle(String title) {
+
+    public void setTitle(String title)
+    {
         this.title = title;
     }
-
 
 
     @Column(length = Content.MAX_LEN, nullable = false, name = "content")
@@ -91,60 +94,60 @@ public class Post implements Comparable<Post> {
 
     @Content
     @PropertyLayout(fieldSetId = LayoutConstants.FieldSetId.DETAILS, sequence = "1")
-    public String getContent() {
+    public String getContent()
+    {
         return content;
     }
-    public void setContent(String handle) {
+
+    public void setContent(String handle)
+    {
         this.content = handle;
     }
 
-
-
     @Action(
-            semantics = SemanticsOf.IDEMPOTENT,
-            executionPublishing = Publishing.ENABLED
+        semantics = SemanticsOf.IDEMPOTENT,
+        executionPublishing = Publishing.ENABLED
     )
     @ActionLayout(
-            associateWith = "title",
-            describedAs = "Updates the object's title"
+        associateWith = "title",
+        describedAs = "Updates the object's title"
     )
-    public Post updateTitle(
-            @Name final String name) {
+    public Post updateTitle(@Name final String name)
+    {
         setTitle(name);
         return this;
     }
-    public String default0UpdateTitle() {
+    public String default0UpdateTitle()
+    {
         return getTitle();
     }
 
-
-
     @Action(
-            semantics = SemanticsOf.NON_IDEMPOTENT_ARE_YOU_SURE
+        semantics = SemanticsOf.NON_IDEMPOTENT_ARE_YOU_SURE
     )
     @ActionLayout(
-            fieldSetId = LayoutConstants.FieldSetId.IDENTITY,
-            describedAs = "Deletes this object from the database",
-            position = ActionLayout.Position.PANEL
+        fieldSetId = LayoutConstants.FieldSetId.IDENTITY,
+        describedAs = "Deletes this object from the database",
+        position = ActionLayout.Position.PANEL
     )
-    public void delete() {
+    public void delete()
+    {
         final String title = titleService.titleOf(this);
         messageService.informUser(String.format("'%s' deleted", title));
         repositoryService.removeAndFlush(this);
     }
 
-
-
     @Override
-    public String toString() {
+    public String toString()
+    {
         return getTitle();
     }
 
     @Override
-    public int compareTo(final Post other) {
+    public int compareTo(final Post other)
+    {
         return Comparator.comparing(Post::getTitle).compare(this, other);
     }
-
 
     @Inject @Transient RepositoryService repositoryService;
     @Inject @Transient TitleService titleService;
