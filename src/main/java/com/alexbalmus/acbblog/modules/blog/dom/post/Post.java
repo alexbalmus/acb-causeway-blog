@@ -65,7 +65,7 @@ public class Post implements Comparable<Post>
         this.content = content;
     }
 
-    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "blog_id")
     @PropertyLayout(fieldSetId =  LayoutConstants.FieldSetId.IDENTITY, sequence = "1")
     @Getter @Setter
@@ -89,7 +89,7 @@ public class Post implements Comparable<Post>
     }
 
 
-    @Column(length = Content.MAX_LEN, nullable = false, name = "content")
+    @Column(length = Content.MAX_LEN, name = "content")
     private String content;
 
     @Content
