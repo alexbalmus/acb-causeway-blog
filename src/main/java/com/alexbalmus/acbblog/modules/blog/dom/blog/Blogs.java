@@ -9,6 +9,8 @@ import javax.inject.Named;
 import com.alexbalmus.acbblog.modules.blog.types.Handle;
 import com.alexbalmus.acbblog.modules.blog.types.Name;
 
+import lombok.RequiredArgsConstructor;
+
 import org.apache.causeway.applib.annotation.*;
 import org.apache.causeway.applib.services.repository.RepositoryService;
 import org.apache.causeway.applib.services.user.UserService;
@@ -16,22 +18,13 @@ import org.apache.causeway.applib.services.user.UserService;
 @Named("blog.Blogs")
 @DomainService(nature = NatureOfService.VIEW)
 @Priority(PriorityPrecedence.EARLY)
+@RequiredArgsConstructor(onConstructor_ = {@Inject} )
+@SuppressWarnings("unused")
 public class Blogs
 {
     private final RepositoryService repositoryService;
     private final BlogsRepository blogsRepository;
     private final UserService userService;
-
-    @Inject
-    public Blogs(
-        final RepositoryService repositoryService,
-        final BlogsRepository blogsRepository,
-        final UserService userService)
-    {
-        this.repositoryService = repositoryService;
-        this.blogsRepository = blogsRepository;
-        this.userService = userService;
-    }
 
     @Action(semantics = SemanticsOf.NON_IDEMPOTENT)
     @ActionLayout(promptStyle = PromptStyle.DIALOG_MODAL)

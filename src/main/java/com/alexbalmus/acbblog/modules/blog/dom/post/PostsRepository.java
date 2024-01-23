@@ -9,7 +9,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface PostsRepository extends JpaRepository<Post, Long>
 {
-    List<Post> findByTitleContaining(final String name);
     List<Post> findByBlog(Blog blog);
     Optional<Post> findByBlogAndTitle(Blog blog, String title);
 }

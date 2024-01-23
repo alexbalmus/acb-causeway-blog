@@ -25,10 +25,13 @@ import lombok.RequiredArgsConstructor;
     sequence = "1",
     promptStyle = PromptStyle.DIALOG_MODAL
 )
-@RequiredArgsConstructor
+@RequiredArgsConstructor(onConstructor_ = {@Inject} )
+@SuppressWarnings("unused")
 public class Blog_createPost
 {
     private final Blog blog;
+    @Inject PostsRepository postsRepository;
+    @Inject RepositoryService repositoryService;
 
     public Blog act(@Name final String title, @Content final String content)
     {
@@ -54,7 +57,4 @@ public class Blog_createPost
                 "nulla pariatur. Excepteur sint occaecat cupidatat non proident, " +
                 "sunt in culpa qui officia deserunt mollit anim id est laborum.";
     }
-
-    @Inject PostsRepository postsRepository;
-    @Inject RepositoryService repositoryService;
 }

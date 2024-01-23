@@ -22,7 +22,14 @@ import com.alexbalmus.acbblog.modules.blog.dom.blog.Blog;
 import com.alexbalmus.acbblog.modules.blog.types.Content;
 import com.alexbalmus.acbblog.modules.blog.types.Name;
 
-import org.apache.causeway.applib.annotation.*;
+import org.apache.causeway.applib.annotation.Action;
+import org.apache.causeway.applib.annotation.ActionLayout;
+import org.apache.causeway.applib.annotation.DomainObject;
+import org.apache.causeway.applib.annotation.DomainObjectLayout;
+import org.apache.causeway.applib.annotation.PropertyLayout;
+import org.apache.causeway.applib.annotation.Publishing;
+import org.apache.causeway.applib.annotation.SemanticsOf;
+import org.apache.causeway.applib.annotation.Title;
 import org.apache.causeway.applib.layout.LayoutConstants;
 import org.apache.causeway.applib.services.message.MessageService;
 import org.apache.causeway.applib.services.repository.RepositoryService;
@@ -40,16 +47,21 @@ import lombok.Setter;
         @UniqueConstraint(name = "Post__title__UNQ", columnNames = {"title"})
     }
 )
-@EntityListeners(CausewayEntityListener.class) // injection support
+@EntityListeners(CausewayEntityListener.class)
 @Named("blog.Post")
 @DomainObject()
-@DomainObjectLayout()  // causes UI events to be triggered
+@DomainObjectLayout()
+@SuppressWarnings("unused")
 public class Post implements Comparable<Post>
 {
+    @Inject @Transient RepositoryService repositoryService;
+    @Inject @Transient TitleService titleService;
+    @Inject @Transient MessageService messageService;
+
     protected Post(){}
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     @Column(nullable = false, name = "id")
     private Long id;
 
@@ -72,7 +84,7 @@ public class Post implements Comparable<Post>
     private Blog blog;
 
 
-    @Column(length = Name.MAX_LEN, nullable = false, name = "title")
+    @Setter @Column(length = Name.MAX_LEN, nullable = false, name = "title")
     private String title;
 
     @Title(prepend = "Object: ")
@@ -83,13 +95,8 @@ public class Post implements Comparable<Post>
         return title;
     }
 
-    public void setTitle(String title)
-    {
-        this.title = title;
-    }
 
-
-    @Column(length = Content.MAX_LEN, name = "content")
+    @Setter @Column(length = Content.MAX_LEN, name = "content")
     private String content;
 
     @Content
@@ -97,11 +104,6 @@ public class Post implements Comparable<Post>
     public String getContent()
     {
         return content;
-    }
-
-    public void setContent(String handle)
-    {
-        this.content = handle;
     }
 
     @Action(
@@ -148,9 +150,4 @@ public class Post implements Comparable<Post>
     {
         return Comparator.comparing(Post::getTitle).compare(this, other);
     }
-
-    @Inject @Transient RepositoryService repositoryService;
-    @Inject @Transient TitleService titleService;
-    @Inject @Transient MessageService messageService;
-
 }

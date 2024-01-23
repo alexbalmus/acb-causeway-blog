@@ -7,7 +7,6 @@ import javax.inject.Named;
 
 import com.alexbalmus.acbblog.modules.blog.dom.blog.Blog;
 import com.alexbalmus.acbblog.modules.blog.dom.blog.Blogs;
-
 import com.alexbalmus.acbblog.modules.blog.types.Handle;
 import com.alexbalmus.acbblog.modules.blog.types.Name;
 
@@ -29,8 +28,12 @@ import org.apache.causeway.applib.services.user.UserService;
 @DomainObject(nature = Nature.VIEW_MODEL)
 @HomePage
 @DomainObjectLayout()
+@SuppressWarnings("unused")
 public class BlogsHomePage
 {
+    @Inject Blogs blogs;
+    @Inject UserService userService;
+
     @ObjectSupport
     public String title()
     {
@@ -58,7 +61,4 @@ public class BlogsHomePage
     {
         return userService.currentUser().get().getName();
     }
-
-    @Inject Blogs blogs;
-    @Inject UserService userService;
 }

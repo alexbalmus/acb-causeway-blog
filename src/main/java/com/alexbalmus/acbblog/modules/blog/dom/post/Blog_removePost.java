@@ -23,15 +23,18 @@ import java.util.stream.Collectors;
     executionPublishing = Publishing.ENABLED
 )
 @ActionLayout(associateWith = "posts", sequence = "2")
-@RequiredArgsConstructor
+@RequiredArgsConstructor(onConstructor_ = {@Inject} )
+@SuppressWarnings("unused")
 public class Blog_removePost
 {
     private final Blog blog;
+    @Inject PostsRepository postsRepository;
+    @Inject RepositoryService repositoryService;
 
     public Blog act(@Name final String title)
     {
         postsRepository.findByBlogAndTitle(blog, title)
-                .ifPresent(post -> repositoryService.remove(post));
+                .ifPresent(repositoryService::remove);
         return blog;
     }
 
@@ -53,7 +56,4 @@ public class Blog_removePost
         List<String> names = choices0Act();
         return names.size() == 1 ? names.get(0) : null;
     }
-
-    @Inject PostsRepository postsRepository;
-    @Inject RepositoryService repositoryService;
 }

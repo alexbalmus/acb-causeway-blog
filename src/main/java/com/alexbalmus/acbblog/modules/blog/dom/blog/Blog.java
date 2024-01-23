@@ -17,6 +17,8 @@ import javax.persistence.Version;
 
 import com.alexbalmus.acbblog.modules.blog.types.Name;
 
+import lombok.Setter;
+
 import org.apache.causeway.applib.annotation.Action;
 import org.apache.causeway.applib.annotation.ActionLayout;
 import org.apache.causeway.applib.annotation.DomainObject;
@@ -39,12 +41,17 @@ import org.apache.causeway.persistence.jpa.applib.integration.CausewayEntityList
         @UniqueConstraint(name = "Blog__name__UNQ", columnNames = {"name"})
     }
 )
-@EntityListeners(CausewayEntityListener.class) // injection support
+@EntityListeners(CausewayEntityListener.class)
 @Named("blog.Blog")
 @DomainObject()
-@DomainObjectLayout()  // causes UI events to be triggered
+@DomainObjectLayout()
+@SuppressWarnings("unused")
 public class Blog implements Comparable<Blog>
 {
+    @Inject @Transient RepositoryService repositoryService;
+    @Inject @Transient TitleService titleService;
+    @Inject @Transient MessageService messageService;
+
     protected Blog(){}
 
     @Id
@@ -63,7 +70,7 @@ public class Blog implements Comparable<Blog>
         this.handle = handle;
     }
 
-    @Column(length = Name.MAX_LEN, nullable = false, name = "name")
+    @Setter @Column(length = Name.MAX_LEN, nullable = false, name = "name")
     private String name;
 
     @Title(prepend = "Blog: ")
@@ -74,12 +81,7 @@ public class Blog implements Comparable<Blog>
         return name;
     }
 
-    public void setName(String name)
-    {
-        this.name = name;
-    }
-
-    @Column(length = Name.MAX_LEN, nullable = false, name = "handle")
+    @Setter @Column(length = Name.MAX_LEN, nullable = false, name = "handle")
     private String handle;
 
     @Name
@@ -87,11 +89,6 @@ public class Blog implements Comparable<Blog>
     public String getHandle()
     {
         return handle;
-    }
-
-    public void setHandle(String handle)
-    {
-        this.handle = handle;
     }
 
     @Action(
@@ -138,10 +135,4 @@ public class Blog implements Comparable<Blog>
     {
         return Comparator.comparing(Blog::getName).compare(this, other);
     }
-
-
-    @Inject @Transient RepositoryService repositoryService;
-    @Inject @Transient TitleService titleService;
-    @Inject @Transient MessageService messageService;
-
 }

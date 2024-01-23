@@ -13,16 +13,15 @@ import java.util.List;
 
 @Collection
 @CollectionLayout(defaultView = "table")
-@RequiredArgsConstructor
+@RequiredArgsConstructor(onConstructor_ = {@Inject} )
+@SuppressWarnings("unused")
 public class Blog_posts
 {
     private final Blog blog;
+    @Inject PostsRepository postsRepository;
 
     public List<Post> coll()
     {
         return postsRepository.findByBlog(blog);
     }
-
-    @Inject
-    PostsRepository postsRepository;
 }
