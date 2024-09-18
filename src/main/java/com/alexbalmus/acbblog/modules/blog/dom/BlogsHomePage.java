@@ -2,8 +2,8 @@ package com.alexbalmus.acbblog.modules.blog.dom;
 
 import java.util.List;
 
-import javax.inject.Inject;
-import javax.inject.Named;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
 
 import com.alexbalmus.acbblog.modules.blog.dom.blog.Blog;
 import com.alexbalmus.acbblog.modules.blog.dom.blog.Blogs;

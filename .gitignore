@@ -25,3 +25,12 @@ replay_pid*
 /acb-blog.iml
 /create-db-schema.sql
 */target/*
+/.idea/.gitignore
+/.idea/compiler.xml
+/.idea/dbnavigator.xml
+/.idea/encodings.xml
+/.idea/jarRepositories.xml
+/.idea/jpa.xml
+/.idea/jpa-buddy.xml
+/.idea/misc.xml
+/.idea/vcs.xml

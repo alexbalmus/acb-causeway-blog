@@ -2,9 +2,9 @@ package com.alexbalmus.acbblog.modules.blog.dom.blog;
 
 import java.util.List;
 
-import javax.annotation.Priority;
-import javax.inject.Inject;
-import javax.inject.Named;
+import jakarta.annotation.Priority;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
 
 import com.alexbalmus.acbblog.modules.blog.types.Handle;
 import com.alexbalmus.acbblog.modules.blog.types.Name;

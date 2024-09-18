@@ -2,18 +2,18 @@ package com.alexbalmus.acbblog.modules.blog.dom.blog;
 
 import java.util.Comparator;
 
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EntityListeners;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
-import javax.persistence.Transient;
-import javax.persistence.UniqueConstraint;
-import javax.persistence.Version;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EntityListeners;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
+import jakarta.persistence.UniqueConstraint;
+import jakarta.persistence.Version;
 
 import com.alexbalmus.acbblog.modules.blog.types.Name;
 

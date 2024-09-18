@@ -1,6 +1,6 @@
 package com.alexbalmus.acbblog.modules.blog.dom.post;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import com.alexbalmus.acbblog.modules.blog.dom.blog.Blog;
 import com.alexbalmus.acbblog.modules.blog.types.Content;

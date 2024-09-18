@@ -7,7 +7,7 @@
     <parent>
         <groupId>org.apache.causeway.app</groupId>
         <artifactId>causeway-app-starter-parent</artifactId>
-        <version>2.0.0</version>
+        <version>3.1.0</version>
         <relativePath/>
     </parent>
 
@@ -20,7 +20,9 @@
     <packaging>jar</packaging>
 
     <properties>
-        <java.version>11</java.version>
+        <java.version>21</java.version>
+        <!-- https://stackoverflow.com/questions/38983934/cannot-get-maven-project-version-property-in-a-spring-application-with-value/38983935#38983935 -->
+        <resource.delimiter>^</resource.delimiter>
     </properties>
 
     <build>
@@ -55,7 +57,7 @@
                 <configuration>
                     <classifier>exec</classifier>
                     <agents>
-                        <agent>${env.HOME}/.m2/repository/org/springframework/spring-instrument/${spring-framework.version}/spring-instrument-${spring-framework.version}.jar</agent>
+                        <agent>${settings.localRepository}/org/springframework/spring-instrument/${spring-framework.version}/spring-instrument-${spring-framework.version}.jar</agent>
                     </agents>
                     <requiresUnpack>
                         <dependency>
@@ -75,12 +77,10 @@
             <artifactId>causeway-mavendeps-webapp</artifactId>
             <type>pom</type>
         </dependency>
-
         <dependency>
             <groupId>org.apache.causeway.viewer</groupId>
             <artifactId>causeway-viewer-wicket-viewer</artifactId>
         </dependency>
-
         <dependency>
             <groupId>org.apache.causeway.viewer</groupId>
             <artifactId>causeway-viewer-restfulobjects-jaxrsresteasy</artifactId>
@@ -88,7 +88,7 @@
 
         <dependency>
             <groupId>org.apache.causeway.security</groupId>
-            <artifactId>causeway-security-shiro</artifactId>
+            <artifactId>causeway-security-simple</artifactId>
         </dependency>
 
         <dependency>
@@ -115,6 +115,7 @@
             <groupId>org.springframework</groupId>
             <artifactId>spring-instrument</artifactId>
         </dependency>
+
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
@@ -138,7 +139,7 @@
                         <artifactId>jib-maven-plugin</artifactId>
                         <configuration>
                             <from>
-                                <image>adoptopenjdk/openjdk11:x86_64-alpine-jre-11.0.10_9</image>
+                                <image>eclipse-temurin:21.0.2_13-jdk-alpine</image>
                             </from>
                             <container>
                                 <jvmFlags>

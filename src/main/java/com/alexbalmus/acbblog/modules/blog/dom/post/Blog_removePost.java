@@ -4,7 +4,7 @@ import com.alexbalmus.acbblog.modules.blog.types.Name;
 
 import lombok.RequiredArgsConstructor;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import com.alexbalmus.acbblog.modules.blog.dom.blog.Blog;
 

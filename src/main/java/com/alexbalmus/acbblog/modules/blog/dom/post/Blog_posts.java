@@ -7,7 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.apache.causeway.applib.annotation.Collection;
 import org.apache.causeway.applib.annotation.CollectionLayout;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import java.util.List;
 
