@@ -39,11 +39,13 @@ public class Blogs
     {
         return repositoryService.persist(new Blog(name, handle));
     }
-    @MemberSupport public String default0Create()
+    @MemberSupport
+    public String default0Create()
     {
         return "My Blog 001";
     }
-    @MemberSupport public String default1Create()
+    @MemberSupport
+    public String default1Create()
     {
         return userService.currentUser().get().getName();
     }

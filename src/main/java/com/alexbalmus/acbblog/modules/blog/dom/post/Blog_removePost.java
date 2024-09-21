@@ -10,6 +10,7 @@ import com.alexbalmus.acbblog.modules.blog.dom.blog.Blog;
 
 import org.apache.causeway.applib.annotation.Action;
 import org.apache.causeway.applib.annotation.ActionLayout;
+import org.apache.causeway.applib.annotation.MemberSupport;
 import org.apache.causeway.applib.annotation.Publishing;
 import org.apache.causeway.applib.annotation.SemanticsOf;
 import org.apache.causeway.applib.services.repository.RepositoryService;
@@ -34,15 +35,10 @@ public class Blog_removePost
     public Blog act(@Name final String title)
     {
         postsRepository.findByBlogAndTitle(blog, title)
-                .ifPresent(repositoryService::remove);
+                .ifPresent(repositoryService::removeAndFlush);
         return blog;
     }
-
-    public String disableAct()
-    {
-        return postsRepository.findByBlog(blog).isEmpty() ? "No posts" : null;
-    }
-
+    @MemberSupport
     public List<String> choices0Act()
     {
         return postsRepository.findByBlog(blog)
@@ -50,10 +46,15 @@ public class Blog_removePost
                 .map(Post::getTitle)
                 .collect(Collectors.toList());
     }
-
+    @MemberSupport
     public String default0Act()
     {
         List<String> names = choices0Act();
         return names.size() == 1 ? names.get(0) : null;
+    }
+
+    public String disableAct()
+    {
+        return postsRepository.findByBlog(blog).isEmpty() ? "No posts" : null;
     }
 }

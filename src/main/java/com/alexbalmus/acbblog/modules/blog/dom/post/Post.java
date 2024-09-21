@@ -25,6 +25,7 @@ import org.apache.causeway.applib.annotation.Action;
 import org.apache.causeway.applib.annotation.ActionLayout;
 import org.apache.causeway.applib.annotation.DomainObject;
 import org.apache.causeway.applib.annotation.DomainObjectLayout;
+import org.apache.causeway.applib.annotation.MemberSupport;
 import org.apache.causeway.applib.annotation.PropertyLayout;
 import org.apache.causeway.applib.annotation.Publishing;
 import org.apache.causeway.applib.annotation.SemanticsOf;
@@ -115,6 +116,7 @@ public class Post implements Comparable<Post>
         setTitle(name);
         return this;
     }
+    @MemberSupport
     public String default0UpdateTitle()
     {
         return getTitle();

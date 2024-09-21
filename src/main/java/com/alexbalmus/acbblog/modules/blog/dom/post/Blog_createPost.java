@@ -8,6 +8,7 @@ import com.alexbalmus.acbblog.modules.blog.types.Name;
 
 import org.apache.causeway.applib.annotation.Action;
 import org.apache.causeway.applib.annotation.ActionLayout;
+import org.apache.causeway.applib.annotation.MemberSupport;
 import org.apache.causeway.applib.annotation.PromptStyle;
 import org.apache.causeway.applib.annotation.Publishing;
 import org.apache.causeway.applib.annotation.SemanticsOf;
@@ -44,10 +45,12 @@ public class Blog_createPost
                 ? String.format("Post with title '%s' already defined for this blog", title)
                 : null;
     }
+    @MemberSupport
     public String default0Act()
     {
         return "My Post 001";
     }
+    @MemberSupport
     public String default1Act()
     {
         return "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor " +
