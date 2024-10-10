@@ -19,14 +19,14 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Action(
-    semantics = SemanticsOf.IDEMPOTENT,
+    semantics = SemanticsOf.NON_IDEMPOTENT_ARE_YOU_SURE,
     commandPublishing = Publishing.ENABLED,
     executionPublishing = Publishing.ENABLED
 )
 @ActionLayout(associateWith = "posts", sequence = "2")
 @RequiredArgsConstructor(onConstructor_ = {@Inject} )
 @SuppressWarnings("unused")
-public class Blog_removePost
+public class Blog_deletePost
 {
     private final Blog blog;
     @Inject PostsRepository postsRepository;
