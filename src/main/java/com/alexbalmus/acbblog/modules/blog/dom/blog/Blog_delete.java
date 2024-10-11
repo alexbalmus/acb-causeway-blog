@@ -1,16 +1,19 @@
 package com.alexbalmus.acbblog.modules.blog.dom.blog;
 
-import com.alexbalmus.acbblog.modules.blog.dom.post.PostsRepository;
-
 import jakarta.inject.Inject;
 
 import lombok.RequiredArgsConstructor;
 
 import org.apache.causeway.applib.annotation.*;
 import org.apache.causeway.applib.layout.LayoutConstants;
+import org.apache.causeway.applib.services.factory.FactoryService;
 import org.apache.causeway.applib.services.message.MessageService;
 import org.apache.causeway.applib.services.repository.RepositoryService;
 import org.apache.causeway.applib.services.title.TitleService;
+
+import com.alexbalmus.acbblog.modules.blog.dom.post.Blog_deletePost;
+import com.alexbalmus.acbblog.modules.blog.dom.post.PostsRepository;
+
 
 @Action(
     semantics = SemanticsOf.NON_IDEMPOTENT_ARE_YOU_SURE
@@ -24,20 +27,27 @@ import org.apache.causeway.applib.services.title.TitleService;
 @SuppressWarnings("unused")
 public class Blog_delete
 {
-    private final Blog blog;
     @Inject TitleService titleService;
     @Inject MessageService messageService;
     @Inject RepositoryService repositoryService;
     @Inject PostsRepository postsRepository;
+    @Inject FactoryService factoryService;
+
+    private final Blog blog;
 
     public void act()
     {
-        var posts = postsRepository.findByBlog(blog);
-        posts.forEach(post -> postsRepository.findByBlogAndTitle(blog, post.getTitle())
-                .ifPresent(repositoryService::removeAndFlush));
+        deletePosts();
 
         final String title = titleService.titleOf(blog);
         messageService.informUser(String.format("'%s' and its posts have been deleted", title));
         repositoryService.removeAndFlush(blog);
+    }
+
+    private void deletePosts()
+    {
+        var blog_deletePost = factoryService.mixin(Blog_deletePost.class, blog);
+        postsRepository.findByBlog(blog)
+                .forEach(blog_deletePost::act);
     }
 }

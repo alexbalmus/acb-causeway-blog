@@ -1,22 +1,23 @@
 package com.alexbalmus.acbblog.modules.blog.dom.post;
 
-import com.alexbalmus.acbblog.modules.blog.types.Name;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import lombok.RequiredArgsConstructor;
 
 import jakarta.inject.Inject;
 
-import com.alexbalmus.acbblog.modules.blog.dom.blog.Blog;
-
 import org.apache.causeway.applib.annotation.Action;
 import org.apache.causeway.applib.annotation.ActionLayout;
 import org.apache.causeway.applib.annotation.MemberSupport;
+import org.apache.causeway.applib.annotation.Programmatic;
 import org.apache.causeway.applib.annotation.Publishing;
 import org.apache.causeway.applib.annotation.SemanticsOf;
 import org.apache.causeway.applib.services.repository.RepositoryService;
 
-import java.util.List;
-import java.util.stream.Collectors;
+import com.alexbalmus.acbblog.modules.blog.types.Name;
+import com.alexbalmus.acbblog.modules.blog.dom.blog.Blog;
+
 
 @Action(
     semantics = SemanticsOf.NON_IDEMPOTENT_ARE_YOU_SURE,
@@ -56,5 +57,11 @@ public class Blog_deletePost
     public String disableAct()
     {
         return postsRepository.findByBlog(blog).isEmpty() ? "No posts" : null;
+    }
+
+    @Programmatic
+    public void act(Post post)
+    {
+        repositoryService.removeAndFlush(post);
     }
 }
