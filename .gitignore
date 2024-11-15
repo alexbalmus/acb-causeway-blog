@@ -53,3 +53,7 @@ replay_pid*
 /target/classes/static/css/page.css
 /target/classes/com/alexbalmus/acbblog/modules/blog/dom/post/Post.columnOrder.txt
 /target/classes/com/alexbalmus/acbblog/modules/blog/dom/post/Post.layout.xml
+/target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst
+/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst
+/target/maven-archiver/pom.properties
+/.idea/uiDesigner.xml

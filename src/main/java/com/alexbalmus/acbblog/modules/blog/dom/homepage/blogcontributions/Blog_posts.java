@@ -1,6 +1,4 @@
-package com.alexbalmus.acbblog.modules.blog.dom.post;
-
-import com.alexbalmus.acbblog.modules.blog.dom.blog.Blog;
+package com.alexbalmus.acbblog.modules.blog.dom.homepage.blogcontributions;
 
 import lombok.RequiredArgsConstructor;
 
@@ -11,6 +9,11 @@ import java.util.List;
 import org.apache.causeway.applib.annotation.Collection;
 import org.apache.causeway.applib.annotation.CollectionLayout;
 import org.apache.causeway.applib.annotation.TableDecorator;
+
+import com.alexbalmus.acbblog.modules.blog.dom.blog.Blog;
+import com.alexbalmus.acbblog.modules.blog.dom.post.Post;
+import com.alexbalmus.acbblog.modules.blog.dom.post.PostsRepository;
+
 
 @Collection
 @CollectionLayout(defaultView = "table", tableDecorator = TableDecorator.DatatablesNet.class)

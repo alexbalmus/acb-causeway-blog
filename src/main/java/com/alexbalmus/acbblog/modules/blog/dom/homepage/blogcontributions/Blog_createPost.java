@@ -1,10 +1,8 @@
-package com.alexbalmus.acbblog.modules.blog.dom.post;
+package com.alexbalmus.acbblog.modules.blog.dom.homepage.blogcontributions;
 
 import jakarta.inject.Inject;
 
-import com.alexbalmus.acbblog.modules.blog.dom.blog.Blog;
-import com.alexbalmus.acbblog.modules.blog.types.Content;
-import com.alexbalmus.acbblog.modules.blog.types.Name;
+import lombok.RequiredArgsConstructor;
 
 import org.apache.causeway.applib.annotation.Action;
 import org.apache.causeway.applib.annotation.ActionLayout;
@@ -14,7 +12,12 @@ import org.apache.causeway.applib.annotation.Publishing;
 import org.apache.causeway.applib.annotation.SemanticsOf;
 import org.apache.causeway.applib.services.repository.RepositoryService;
 
-import lombok.RequiredArgsConstructor;
+import com.alexbalmus.acbblog.modules.blog.dom.blog.Blog;
+import com.alexbalmus.acbblog.modules.blog.types.Content;
+import com.alexbalmus.acbblog.modules.blog.types.Name;
+import com.alexbalmus.acbblog.modules.blog.dom.post.Post;
+import com.alexbalmus.acbblog.modules.blog.dom.post.PostsRepository;
+
 
 @Action(
     semantics = SemanticsOf.NON_IDEMPOTENT,
@@ -22,7 +25,7 @@ import lombok.RequiredArgsConstructor;
     executionPublishing = Publishing.ENABLED
 )
 @ActionLayout(
-    associateWith = "posts",
+    associateWith = "blog",
     sequence = "1",
     promptStyle = PromptStyle.DIALOG_MODAL
 )

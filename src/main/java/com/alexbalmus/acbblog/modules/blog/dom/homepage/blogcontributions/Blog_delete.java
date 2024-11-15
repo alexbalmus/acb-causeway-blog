@@ -1,4 +1,4 @@
-package com.alexbalmus.acbblog.modules.blog.dom.blog;
+package com.alexbalmus.acbblog.modules.blog.dom.homepage.blogcontributions;
 
 import jakarta.inject.Inject;
 
@@ -11,8 +11,8 @@ import org.apache.causeway.applib.services.message.MessageService;
 import org.apache.causeway.applib.services.repository.RepositoryService;
 import org.apache.causeway.applib.services.title.TitleService;
 
-import com.alexbalmus.acbblog.modules.blog.dom.post.Blog_deletePost;
 import com.alexbalmus.acbblog.modules.blog.dom.post.PostsRepository;
+import com.alexbalmus.acbblog.modules.blog.dom.blog.Blog;
 
 
 @Action(

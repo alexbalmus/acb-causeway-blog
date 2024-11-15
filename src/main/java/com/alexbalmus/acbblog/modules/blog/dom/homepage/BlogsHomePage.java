@@ -1,4 +1,4 @@
-package com.alexbalmus.acbblog.modules.blog.dom;
+package com.alexbalmus.acbblog.modules.blog.dom.homepage;
 
 import java.util.List;
 
@@ -62,6 +62,6 @@ public class BlogsHomePage
     @MemberSupport
     public String default1Create()
     {
-        return userService.currentUser().get().getName();
+        return userService.currentUser().orElseThrow().getName();
     }
 }
