@@ -99,4 +99,9 @@ public class BlogsHomePage
         List<String> names = choices0DeleteBlog();
         return names.size() == 1 ? names.get(0) : null;
     }
+    @MemberSupport
+    public String disableDeleteBlog()
+    {
+        return choices0DeleteBlog().isEmpty() ? "No blogs" : null;
+    }
 }
