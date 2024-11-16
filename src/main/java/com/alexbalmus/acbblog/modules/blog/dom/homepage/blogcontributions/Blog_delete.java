@@ -48,6 +48,6 @@ public class Blog_delete
     {
         var blog_deletePost = factoryService.mixin(Blog_deletePost.class, blog);
         postsRepository.findByBlog(blog)
-                .forEach(blog_deletePost::act);
+            .forEach(blog_deletePost::act);
     }
 }

@@ -47,21 +47,28 @@ public class Blogs
     @MemberSupport
     public String default1Create()
     {
-        return userService.currentUser().get().getName();
+        return userService.currentUser().orElseThrow().getName();
     }
 
 
     @Action(semantics = SemanticsOf.SAFE)
     @ActionLayout(promptStyle = PromptStyle.DIALOG_SIDEBAR)
-    public List<Blog> findByName(@Name final String name)
+    public List<Blog> findByNameContaining(@Name final String name)
     {
         return blogsRepository.findByNameContaining(name);
+    }
+
+    @Action(semantics = SemanticsOf.SAFE)
+    @ActionLayout(promptStyle = PromptStyle.DIALOG_SIDEBAR)
+    public Blog findByNameAndHandle(@Name final String name, @Handle String handle)
+    {
+        return blogsRepository.findByNameAndHandle(name, handle);
     }
 
     @Action(semantics = SemanticsOf.SAFE, restrictTo = RestrictTo.PROTOTYPING)
     public List<Blog> listAll()
     {
-        return blogsRepository.findAllByHandle(userService.currentUser().get().getName());
+        return blogsRepository.findAllByHandle(userService.currentUser().orElseThrow().getName());
     }
 
 }

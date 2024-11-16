@@ -11,9 +11,10 @@ import org.springframework.context.annotation.Import;
 @Import({
     AppManifest.class,
 })
-public class ACBBlogApp extends SpringBootServletInitializer {
-
-    public static void main(String[] args) {
+public class ACBBlogApp extends SpringBootServletInitializer
+{
+    public static void main(String[] args)
+    {
         CausewayPresets.prototyping(); // or run with use -DPROTOTYPING=true
         SpringApplication.run(new Class[] { ACBBlogApp.class }, args);
     }

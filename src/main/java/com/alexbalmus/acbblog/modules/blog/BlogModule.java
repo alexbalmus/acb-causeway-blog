@@ -14,6 +14,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
     basePackageClasses = {
         BlogModule.class
 })
-public class BlogModule {
+public class BlogModule
+{
 
 }

@@ -52,9 +52,9 @@ public class Blog_deletePost
     public List<String> choices0Act()
     {
         return postsRepository.findByBlog(blog)
-                .stream()
-                .map(Post::getTitle)
-                .collect(Collectors.toList());
+            .stream()
+            .map(Post::getTitle)
+            .collect(Collectors.toList());
     }
     @MemberSupport
     public String default0Act()

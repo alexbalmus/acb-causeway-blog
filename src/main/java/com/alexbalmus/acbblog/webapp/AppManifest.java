@@ -46,9 +46,11 @@ import java.util.List;
 @PropertySources({
     @PropertySource(CausewayPresets.NoTranslations),
 })
-public class AppManifest {
+public class AppManifest
+{
     @Bean
-    public PasswordEncoder encoder() {
+    public PasswordEncoder encoder()
+    {
         return new BCryptPasswordEncoder();
     }
 
@@ -59,7 +61,8 @@ public class AppManifest {
      * with a different CausewayModuleSecurityXxx integration.
      */
     @Bean
-    public SimpleRealm simpleAuthRealm(final PasswordEncoder passwordEncoder) {
+    public SimpleRealm simpleAuthRealm(final PasswordEncoder passwordEncoder)
+    {
         var hashedPass = passwordEncoder.encode("pass");
         return new SimpleRealm()
                 .addRole("admin_role", id->Grant.CHANGE)

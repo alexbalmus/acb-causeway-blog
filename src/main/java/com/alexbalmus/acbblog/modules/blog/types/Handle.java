@@ -14,6 +14,7 @@ import java.lang.annotation.Target;
 @ParameterLayout(named = "Handle")
 @Target({ ElementType.METHOD, ElementType.FIELD, ElementType.PARAMETER, ElementType.ANNOTATION_TYPE })
 @Retention(RetentionPolicy.RUNTIME)
-public @interface Handle {
+public @interface Handle
+{
     int MAX_LEN = 40;
 }

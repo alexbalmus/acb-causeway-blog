@@ -45,8 +45,8 @@ public class Blog_createPost
     public String validate0Act(final String title)
     {
         return postsRepository.findByBlogAndTitle(blog, title).isPresent()
-                ? String.format("Post with title '%s' already defined for this blog", title)
-                : null;
+            ? String.format("Post with title '%s' already defined for this blog", title)
+            : null;
     }
     @MemberSupport
     public String default0Act()
