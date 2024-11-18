@@ -27,13 +27,13 @@ import com.alexbalmus.acbblog.modules.blog.dom.blog.Blog;
 @SuppressWarnings("unused")
 public class Blog_delete
 {
+    private final Blog blog;
+
     @Inject TitleService titleService;
     @Inject MessageService messageService;
     @Inject RepositoryService repositoryService;
     @Inject PostsRepository postsRepository;
     @Inject FactoryService factoryService;
-
-    private final Blog blog;
 
     public void act()
     {

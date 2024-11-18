@@ -22,6 +22,7 @@ import com.alexbalmus.acbblog.modules.blog.dom.post.PostsRepository;
 public class Blog_posts
 {
     private final Blog blog;
+
     @Inject PostsRepository postsRepository;
 
     public List<Post> coll()

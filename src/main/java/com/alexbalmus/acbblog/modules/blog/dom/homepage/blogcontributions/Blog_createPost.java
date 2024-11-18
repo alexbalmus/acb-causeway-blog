@@ -34,6 +34,7 @@ import com.alexbalmus.acbblog.modules.blog.dom.post.PostsRepository;
 public class Blog_createPost
 {
     private final Blog blog;
+
     @Inject PostsRepository postsRepository;
     @Inject RepositoryService repositoryService;
 

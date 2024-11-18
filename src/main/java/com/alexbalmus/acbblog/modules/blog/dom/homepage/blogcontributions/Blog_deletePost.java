@@ -33,6 +33,7 @@ import com.alexbalmus.acbblog.modules.blog.dom.post.PostsRepository;
 public class Blog_deletePost
 {
     private final Blog blog;
+
     @Inject PostsRepository postsRepository;
     @Inject RepositoryService repositoryService;
     @Inject MessageService messageService;
@@ -62,7 +63,7 @@ public class Blog_deletePost
         List<String> names = choices0Act();
         return names.size() == 1 ? names.get(0) : null;
     }
-
+    @MemberSupport
     public String disableAct()
     {
         return postsRepository.findByBlog(blog).isEmpty() ? "No posts" : null;

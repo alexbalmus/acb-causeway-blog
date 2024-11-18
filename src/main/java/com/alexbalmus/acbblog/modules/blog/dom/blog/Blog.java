@@ -62,7 +62,8 @@ public class Blog implements Comparable<Blog>
         this.handle = handle;
     }
 
-    @Setter @Column(length = Name.MAX_LEN, nullable = false, name = "name")
+    @Setter
+    @Column(length = Name.MAX_LEN, nullable = false, name = "name")
     private String name;
 
     @Title(prepend = "Blog: ")
@@ -73,7 +74,8 @@ public class Blog implements Comparable<Blog>
         return name;
     }
 
-    @Setter @Column(length = Name.MAX_LEN, nullable = false, name = "handle")
+    @Setter
+    @Column(length = Name.MAX_LEN, nullable = false, name = "handle")
     private String handle;
 
     @Name

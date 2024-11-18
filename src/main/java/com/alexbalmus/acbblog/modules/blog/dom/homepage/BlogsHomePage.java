@@ -6,12 +6,6 @@ import java.util.Optional;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
 
-import com.alexbalmus.acbblog.modules.blog.dom.blog.Blog;
-import com.alexbalmus.acbblog.modules.blog.dom.blog.Blogs;
-import com.alexbalmus.acbblog.modules.blog.types.Handle;
-import com.alexbalmus.acbblog.modules.blog.types.Name;
-import com.alexbalmus.acbblog.modules.blog.dom.homepage.blogcontributions.Blog_delete;
-
 import org.apache.causeway.applib.annotation.Action;
 import org.apache.causeway.applib.annotation.ActionLayout;
 import org.apache.causeway.applib.annotation.Collection;
@@ -28,6 +22,13 @@ import org.apache.causeway.applib.annotation.TableDecorator;
 import org.apache.causeway.applib.layout.LayoutConstants;
 import org.apache.causeway.applib.services.factory.FactoryService;
 import org.apache.causeway.applib.services.user.UserService;
+
+import com.alexbalmus.acbblog.modules.blog.dom.blog.Blog;
+import com.alexbalmus.acbblog.modules.blog.dom.blog.Blogs;
+import com.alexbalmus.acbblog.modules.blog.types.Handle;
+import com.alexbalmus.acbblog.modules.blog.types.Name;
+import com.alexbalmus.acbblog.modules.blog.dom.homepage.blogcontributions.Blog_delete;
+
 
 @Named("blog.BlogsHomePage")
 @DomainObject(nature = Nature.VIEW_MODEL)

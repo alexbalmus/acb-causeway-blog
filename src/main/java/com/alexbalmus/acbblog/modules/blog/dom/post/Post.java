@@ -81,7 +81,8 @@ public class Post implements Comparable<Post>
     private Blog blog;
 
 
-    @Setter @Column(length = Name.MAX_LEN, nullable = false, name = "title")
+    @Setter
+    @Column(length = Name.MAX_LEN, nullable = false, name = "title")
     private String title;
 
     @Title(prepend = "Object: ")
@@ -93,7 +94,8 @@ public class Post implements Comparable<Post>
     }
 
 
-    @Setter @Column(length = Content.MAX_LEN, name = "content")
+    @Setter
+    @Column(length = Content.MAX_LEN, name = "content")
     private String content;
 
     @Content

@@ -57,3 +57,4 @@ replay_pid*
 /target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst
 /target/maven-archiver/pom.properties
 /.idea/uiDesigner.xml
+/.idea/codeStyles/codeStyleConfig.xml

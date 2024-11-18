@@ -29,19 +29,19 @@ import java.util.List;
 
 @Configuration
 @Import({
-        CausewayModuleApplibMixins.class,
-        CausewayModuleApplibChangeAndExecutionLoggers.class,
+    CausewayModuleApplibMixins.class,
+    CausewayModuleApplibChangeAndExecutionLoggers.class,
 
-        CausewayModuleCoreRuntimeServices.class,
-        CausewayModuleSecuritySimple.class,
-        CausewayModulePersistenceJpaEclipselink.class,
-        CausewayModuleViewerRestfulObjectsJaxrsResteasy.class,
-        CausewayModuleViewerGraphqlViewer.class,
-        CausewayModuleViewerWicketApplibMixins.class,
-        CausewayModuleViewerWicketViewer.class,
+    CausewayModuleCoreRuntimeServices.class,
+    CausewayModuleSecuritySimple.class,
+    CausewayModulePersistenceJpaEclipselink.class,
+    CausewayModuleViewerRestfulObjectsJaxrsResteasy.class,
+    CausewayModuleViewerGraphqlViewer.class,
+    CausewayModuleViewerWicketApplibMixins.class,
+    CausewayModuleViewerWicketViewer.class,
 
-        CausewayModuleTestingH2ConsoleUi.class,
-        BlogModule.class
+    CausewayModuleTestingH2ConsoleUi.class,
+    BlogModule.class
 })
 @PropertySources({
     @PropertySource(CausewayPresets.NoTranslations),
@@ -65,23 +65,23 @@ public class AppManifest
     {
         var hashedPass = passwordEncoder.encode("pass");
         return new SimpleRealm()
-                .addRole("admin_role", id->Grant.CHANGE)
-                .addRole("hello_role", id->
-                        id.getFullIdentityString().contains("HelloWorldObject")
-                                ? Grant.CHANGE
-                                : Grant.NONE)
-                .addRole("default_role", id->
-                        id.getLogicalType().getNamespace().startsWith("causeway.applib")
-                                || id.getLogicalType().getNamespace().startsWith("causeway.security")
-                                ? Grant.CHANGE
-                                : Grant.NONE)
-                .addRole("fixtures_role", id->
-                        id.getLogicalType().getNamespace().startsWith("causeway.testing.fixtures")
-                                ? Grant.CHANGE
-                                : Grant.NONE)
-                .addUser("sven", hashedPass, List.of("admin_role"))
-                .addUser("dick", hashedPass, List.of("hello_role", "default_role"))
-                .addUser("bob", hashedPass, List.of("hello_role", "default_role", "fixtures_role"))
-                .addUser("joe", hashedPass, List.of("hello_role", "default_role"));
+            .addRole("admin_role", id->Grant.CHANGE)
+            .addRole("hello_role", id->
+                    id.getFullIdentityString().contains("HelloWorldObject")
+                            ? Grant.CHANGE
+                            : Grant.NONE)
+            .addRole("default_role", id->
+                    id.getLogicalType().getNamespace().startsWith("causeway.applib")
+                            || id.getLogicalType().getNamespace().startsWith("causeway.security")
+                            ? Grant.CHANGE
+                            : Grant.NONE)
+            .addRole("fixtures_role", id->
+                    id.getLogicalType().getNamespace().startsWith("causeway.testing.fixtures")
+                            ? Grant.CHANGE
+                            : Grant.NONE)
+            .addUser("sven", hashedPass, List.of("admin_role"))
+            .addUser("dick", hashedPass, List.of("hello_role", "default_role"))
+            .addUser("bob", hashedPass, List.of("hello_role", "default_role", "fixtures_role"))
+            .addUser("joe", hashedPass, List.of("hello_role", "default_role"));
     }
 }
