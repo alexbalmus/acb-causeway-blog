@@ -13,7 +13,7 @@ import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
 import jakarta.persistence.Version;
 
-import com.alexbalmus.acbblog.modules.blog.types.Name;
+import lombok.Setter;
 
 import org.apache.causeway.applib.annotation.Action;
 import org.apache.causeway.applib.annotation.ActionLayout;
@@ -27,7 +27,9 @@ import org.apache.causeway.applib.annotation.Title;
 import org.apache.causeway.applib.layout.LayoutConstants;
 import org.apache.causeway.persistence.jpa.applib.integration.CausewayEntityListener;
 
-import lombok.Setter;
+import com.alexbalmus.acbblog.modules.blog.types.Name;
+import com.alexbalmus.acbblog.modules.blog.types.Handle;
+
 
 @Entity
 @Table(
@@ -44,8 +46,6 @@ import lombok.Setter;
 @SuppressWarnings("unused")
 public class Blog implements Comparable<Blog>
 {
-    protected Blog() {}
-
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     @Column(nullable = false, name = "id")
@@ -55,6 +55,16 @@ public class Blog implements Comparable<Blog>
     @Column(nullable = false, name = "version")
     private int version;
 
+    @Setter
+    @Column(length = Name.MAX_LEN, nullable = false, name = "name")
+    private String name;
+
+    @Setter
+    @Column(length = Name.MAX_LEN, nullable = false, name = "handle")
+    private String handle;
+
+
+    protected Blog() {}
 
     public Blog(final String name, final String handle)
     {
@@ -62,9 +72,6 @@ public class Blog implements Comparable<Blog>
         this.handle = handle;
     }
 
-    @Setter
-    @Column(length = Name.MAX_LEN, nullable = false, name = "name")
-    private String name;
 
     @Title(prepend = "Blog: ")
     @Name
@@ -72,17 +79,6 @@ public class Blog implements Comparable<Blog>
     public String getName()
     {
         return name;
-    }
-
-    @Setter
-    @Column(length = Name.MAX_LEN, nullable = false, name = "handle")
-    private String handle;
-
-    @Name
-    @PropertyLayout(fieldSetId = LayoutConstants.FieldSetId.IDENTITY, sequence = "2")
-    public String getHandle()
-    {
-        return handle;
     }
 
     @Action(
@@ -102,6 +98,13 @@ public class Blog implements Comparable<Blog>
     public String default0UpdateName()
     {
         return getName();
+    }
+
+    @Handle
+    @PropertyLayout(fieldSetId = LayoutConstants.FieldSetId.IDENTITY, sequence = "2")
+    public String getHandle()
+    {
+        return handle;
     }
 
     @Override

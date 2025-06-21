@@ -27,7 +27,7 @@ import com.alexbalmus.acbblog.modules.blog.dom.blog.Blog;
 import com.alexbalmus.acbblog.modules.blog.dom.blog.Blogs;
 import com.alexbalmus.acbblog.modules.blog.types.Handle;
 import com.alexbalmus.acbblog.modules.blog.types.Name;
-import com.alexbalmus.acbblog.modules.blog.dom.homepage.blogcontributions.Blog_delete;
+import com.alexbalmus.acbblog.modules.blog.dom.homepage.blogcontribs.Blog_delete;
 
 
 @Named("blog.BlogsHomePage")
@@ -44,12 +44,12 @@ public class BlogsHomePage
     @ObjectSupport
     public String title()
     {
-        return getObjects().size() + " blogs";
+        return getBlogs().size() + " blogs";
     }
 
     @Collection
     @CollectionLayout(tableDecorator = TableDecorator.DatatablesNet.class)
-    public List<Blog> getObjects()
+    public List<Blog> getBlogs()
     {
         return blogs.listAll();
     }
@@ -68,7 +68,7 @@ public class BlogsHomePage
     @MemberSupport
     public String default1Create()
     {
-        return userService.currentUser().orElseThrow().getName();
+        return userService.currentUser().orElseThrow().name();
     }
 
     @Action(semantics = SemanticsOf.NON_IDEMPOTENT_ARE_YOU_SURE)
@@ -80,7 +80,7 @@ public class BlogsHomePage
     public void deleteBlog(@Name final String name)
     {
         Optional.ofNullable(blogs.findByNameAndHandle(name,
-            userService.currentUser().orElseThrow().getName()))
+            userService.currentUser().orElseThrow().name()))
             .ifPresent(blog ->
             {
                 var blog_delete = factoryService.mixin(Blog_delete.class, blog);

@@ -47,7 +47,7 @@ public class Blogs
     @MemberSupport
     public String default1Create()
     {
-        return userService.currentUser().orElseThrow().getName();
+        return userService.currentUser().orElseThrow().name();
     }
 
 
@@ -68,7 +68,7 @@ public class Blogs
     @Action(semantics = SemanticsOf.SAFE, restrictTo = RestrictTo.PROTOTYPING)
     public List<Blog> listAll()
     {
-        return blogsRepository.findAllByHandle(userService.currentUser().orElseThrow().getName());
+        return blogsRepository.findAllByHandle(userService.currentUser().orElseThrow().name());
     }
 
 }
