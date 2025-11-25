@@ -1,6 +1,7 @@
-package com.alexbalmus.acbblog.modules.blog.dom.blog;
+package com.alexbalmus.acbblog.modules.blog.domain.blog;
 
 import java.util.Comparator;
+import java.util.Objects;
 
 import jakarta.inject.Named;
 import jakarta.persistence.Column;
@@ -12,6 +13,8 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
 import jakarta.persistence.Version;
+
+import org.springframework.data.util.ProxyUtils;
 
 import lombok.Setter;
 
@@ -117,5 +120,29 @@ public class Blog implements Comparable<Blog>
     public int compareTo(final Blog other)
     {
         return Comparator.comparing(Blog::getName).compare(this, other);
+    }
+
+    @Override
+    public final boolean equals(Object o)
+    {
+        if (this == o)
+        {
+            return true;
+        }
+
+        if (o == null || ProxyUtils.getUserClass(this) != ProxyUtils.getUserClass(o))
+        {
+            return false;
+        }
+
+        Blog blog = (Blog) o;
+
+        return id != null && Objects.equals(id, blog.id);
+    }
+
+    @Override
+    public final int hashCode()
+    {
+        return ProxyUtils.getUserClass(this).hashCode();
     }
 }

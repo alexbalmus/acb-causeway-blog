@@ -1,4 +1,4 @@
-package com.alexbalmus.acbblog.modules.blog.dom.homepage.blogcontribs;
+package com.alexbalmus.acbblog.modules.blog.domain.homepage.mixins.blog;
 
 import jakarta.inject.Inject;
 
@@ -12,11 +12,11 @@ import org.apache.causeway.applib.annotation.Publishing;
 import org.apache.causeway.applib.annotation.SemanticsOf;
 import org.apache.causeway.applib.services.repository.RepositoryService;
 
-import com.alexbalmus.acbblog.modules.blog.dom.blog.Blog;
+import com.alexbalmus.acbblog.modules.blog.domain.blog.Blog;
 import com.alexbalmus.acbblog.modules.blog.types.Content;
 import com.alexbalmus.acbblog.modules.blog.types.Name;
-import com.alexbalmus.acbblog.modules.blog.dom.post.Post;
-import com.alexbalmus.acbblog.modules.blog.dom.post.PostsRepository;
+import com.alexbalmus.acbblog.modules.blog.domain.post.Post;
+import com.alexbalmus.acbblog.modules.blog.domain.post.PostsRepository;
 
 
 @Action(

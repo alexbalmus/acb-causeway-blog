@@ -1,10 +1,12 @@
-package com.alexbalmus.acbblog.modules.blog.dom.homepage;
+package com.alexbalmus.acbblog.modules.blog.domain.homepage;
 
 import java.util.List;
 import java.util.Optional;
 
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
+
+import lombok.experimental.ExtensionMethod;
 
 import org.apache.causeway.applib.annotation.Action;
 import org.apache.causeway.applib.annotation.ActionLayout;
@@ -23,17 +25,18 @@ import org.apache.causeway.applib.layout.LayoutConstants;
 import org.apache.causeway.applib.services.factory.FactoryService;
 import org.apache.causeway.applib.services.user.UserService;
 
-import com.alexbalmus.acbblog.modules.blog.dom.blog.Blog;
-import com.alexbalmus.acbblog.modules.blog.dom.blog.Blogs;
+import com.alexbalmus.acbblog.modules.blog.domain.blog.Blog;
+import com.alexbalmus.acbblog.modules.blog.domain.blog.Blogs;
 import com.alexbalmus.acbblog.modules.blog.types.Handle;
 import com.alexbalmus.acbblog.modules.blog.types.Name;
-import com.alexbalmus.acbblog.modules.blog.dom.homepage.blogcontribs.Blog_delete;
+import com.alexbalmus.acbblog.modules.blog.domain.homepage.mixins.blog.Blog_delete;
 
 
 @Named("blog.BlogsHomePage")
 @DomainObject(nature = Nature.VIEW_MODEL)
 @HomePage
 @DomainObjectLayout()
+@ExtensionMethod(Blog_delete.class)
 @SuppressWarnings("unused")
 public class BlogsHomePage
 {
@@ -81,11 +84,7 @@ public class BlogsHomePage
     {
         Optional.ofNullable(blogs.findByNameAndHandle(name,
             userService.currentUser().orElseThrow().name()))
-            .ifPresent(blog ->
-            {
-                var blog_delete = factoryService.mixin(Blog_delete.class, blog);
-                blog_delete.act();
-            });
+            .ifPresent(blog -> blog.delete());
     }
     @MemberSupport
     public List<String> choices0DeleteBlog()

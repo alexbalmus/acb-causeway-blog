@@ -1,8 +1,9 @@
-package com.alexbalmus.acbblog.modules.blog.dom.homepage.blogcontribs;
+package com.alexbalmus.acbblog.modules.blog.domain.homepage.mixins.blog;
 
 import jakarta.inject.Inject;
 
 import lombok.RequiredArgsConstructor;
+import lombok.experimental.ExtensionMethod;
 
 import org.apache.causeway.applib.annotation.*;
 import org.apache.causeway.applib.layout.LayoutConstants;
@@ -11,8 +12,9 @@ import org.apache.causeway.applib.services.message.MessageService;
 import org.apache.causeway.applib.services.repository.RepositoryService;
 import org.apache.causeway.applib.services.title.TitleService;
 
-import com.alexbalmus.acbblog.modules.blog.dom.post.PostsRepository;
-import com.alexbalmus.acbblog.modules.blog.dom.blog.Blog;
+import com.alexbalmus.acbblog.modules.blog.common.ApplicationContextHelper;
+import com.alexbalmus.acbblog.modules.blog.domain.post.PostsRepository;
+import com.alexbalmus.acbblog.modules.blog.domain.blog.Blog;
 
 
 @Action(
@@ -25,6 +27,7 @@ import com.alexbalmus.acbblog.modules.blog.dom.blog.Blog;
 )
 @RequiredArgsConstructor(onConstructor_ = {@Inject} )
 @SuppressWarnings("unused")
+@ExtensionMethod(Blog_deletePost.class)
 public class Blog_delete
 {
     private final Blog blog;
@@ -46,8 +49,15 @@ public class Blog_delete
 
     private void deletePosts()
     {
-        var blog_deletePost = factoryService.mixin(Blog_deletePost.class, blog);
         postsRepository.findByBlog(blog)
-            .forEach(blog_deletePost::act);
+            .forEach(post -> blog.deletePost(post));
+    }
+
+    // Extension method for Blog:
+    public static void delete(Blog thiz)
+    {
+        ApplicationContextHelper.getBean(PostsRepository.class).findByBlog(thiz)
+            .forEach(post -> thiz.deletePost(post));
+        ApplicationContextHelper.getBean(RepositoryService.class).removeAndFlush(thiz);
     }
 }

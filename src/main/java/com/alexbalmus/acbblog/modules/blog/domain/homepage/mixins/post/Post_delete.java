@@ -1,4 +1,4 @@
-package com.alexbalmus.acbblog.modules.blog.dom.homepage.postcontribs;
+package com.alexbalmus.acbblog.modules.blog.domain.homepage.mixins.post;
 
 import jakarta.inject.Inject;
 
@@ -12,7 +12,7 @@ import org.apache.causeway.applib.services.message.MessageService;
 import org.apache.causeway.applib.services.repository.RepositoryService;
 import org.apache.causeway.applib.services.title.TitleService;
 
-import com.alexbalmus.acbblog.modules.blog.dom.post.Post;
+import com.alexbalmus.acbblog.modules.blog.domain.post.Post;
 
 @Action(
     semantics = SemanticsOf.NON_IDEMPOTENT_ARE_YOU_SURE

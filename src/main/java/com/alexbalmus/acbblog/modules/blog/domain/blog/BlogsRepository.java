@@ -1,4 +1,4 @@
-package com.alexbalmus.acbblog.modules.blog.dom.blog;
+package com.alexbalmus.acbblog.modules.blog.domain.blog;
 
 import java.util.List;
 

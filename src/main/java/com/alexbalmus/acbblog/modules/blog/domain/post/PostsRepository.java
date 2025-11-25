@@ -1,9 +1,9 @@
-package com.alexbalmus.acbblog.modules.blog.dom.post;
+package com.alexbalmus.acbblog.modules.blog.domain.post;
 
 import java.util.List;
 import java.util.Optional;
 
-import com.alexbalmus.acbblog.modules.blog.dom.blog.Blog;
+import com.alexbalmus.acbblog.modules.blog.domain.blog.Blog;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 

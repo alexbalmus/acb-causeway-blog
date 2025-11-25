@@ -1,6 +1,7 @@
-package com.alexbalmus.acbblog.modules.blog.dom.post;
+package com.alexbalmus.acbblog.modules.blog.domain.post;
 
 import java.util.Comparator;
+import java.util.Objects;
 
 import jakarta.inject.Named;
 import jakarta.persistence.Column;
@@ -18,6 +19,8 @@ import jakarta.persistence.Version;
 import lombok.Getter;
 import lombok.Setter;
 
+import org.springframework.data.util.ProxyUtils;
+
 import org.apache.causeway.applib.annotation.Action;
 import org.apache.causeway.applib.annotation.ActionLayout;
 import org.apache.causeway.applib.annotation.DomainObject;
@@ -30,7 +33,7 @@ import org.apache.causeway.applib.annotation.Title;
 import org.apache.causeway.applib.layout.LayoutConstants;
 import org.apache.causeway.persistence.jpa.applib.integration.CausewayEntityListener;
 
-import com.alexbalmus.acbblog.modules.blog.dom.blog.Blog;
+import com.alexbalmus.acbblog.modules.blog.domain.blog.Blog;
 import com.alexbalmus.acbblog.modules.blog.types.Content;
 import com.alexbalmus.acbblog.modules.blog.types.Name;
 
@@ -113,6 +116,30 @@ public class Post implements Comparable<Post>
     public String default0UpdateTitle()
     {
         return getTitle();
+    }
+
+    @Override
+    public final boolean equals(Object o)
+    {
+        if (this == o)
+        {
+            return true;
+        }
+
+        if (o == null || ProxyUtils.getUserClass(this) != ProxyUtils.getUserClass(o))
+        {
+            return false;
+        }
+
+        Post post = (Post) o;
+
+        return id != null && Objects.equals(id, post.id);
+    }
+
+    @Override
+    public final int hashCode()
+    {
+        return ProxyUtils.getUserClass(this).hashCode();
     }
 
     @Override

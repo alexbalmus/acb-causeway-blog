@@ -1,4 +1,4 @@
-package com.alexbalmus.acbblog.modules.blog.dom.homepage.blogcontribs;
+package com.alexbalmus.acbblog.modules.blog.domain.homepage.mixins.blog;
 
 import lombok.RequiredArgsConstructor;
 
@@ -10,9 +10,9 @@ import org.apache.causeway.applib.annotation.Collection;
 import org.apache.causeway.applib.annotation.CollectionLayout;
 import org.apache.causeway.applib.annotation.TableDecorator;
 
-import com.alexbalmus.acbblog.modules.blog.dom.blog.Blog;
-import com.alexbalmus.acbblog.modules.blog.dom.post.Post;
-import com.alexbalmus.acbblog.modules.blog.dom.post.PostsRepository;
+import com.alexbalmus.acbblog.modules.blog.domain.blog.Blog;
+import com.alexbalmus.acbblog.modules.blog.domain.post.Post;
+import com.alexbalmus.acbblog.modules.blog.domain.post.PostsRepository;
 
 
 @Collection

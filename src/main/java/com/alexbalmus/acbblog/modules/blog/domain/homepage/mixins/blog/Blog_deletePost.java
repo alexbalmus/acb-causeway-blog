@@ -1,4 +1,4 @@
-package com.alexbalmus.acbblog.modules.blog.dom.homepage.blogcontribs;
+package com.alexbalmus.acbblog.modules.blog.domain.homepage.mixins.blog;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -10,16 +10,16 @@ import jakarta.inject.Inject;
 import org.apache.causeway.applib.annotation.Action;
 import org.apache.causeway.applib.annotation.ActionLayout;
 import org.apache.causeway.applib.annotation.MemberSupport;
-import org.apache.causeway.applib.annotation.Programmatic;
 import org.apache.causeway.applib.annotation.Publishing;
 import org.apache.causeway.applib.annotation.SemanticsOf;
 import org.apache.causeway.applib.services.message.MessageService;
 import org.apache.causeway.applib.services.repository.RepositoryService;
 
+import com.alexbalmus.acbblog.modules.blog.common.ApplicationContextHelper;
 import com.alexbalmus.acbblog.modules.blog.types.Name;
-import com.alexbalmus.acbblog.modules.blog.dom.blog.Blog;
-import com.alexbalmus.acbblog.modules.blog.dom.post.Post;
-import com.alexbalmus.acbblog.modules.blog.dom.post.PostsRepository;
+import com.alexbalmus.acbblog.modules.blog.domain.blog.Blog;
+import com.alexbalmus.acbblog.modules.blog.domain.post.Post;
+import com.alexbalmus.acbblog.modules.blog.domain.post.PostsRepository;
 
 
 @Action(
@@ -69,9 +69,9 @@ public class Blog_deletePost
         return postsRepository.findByBlog(blog).isEmpty() ? "No posts" : null;
     }
 
-    @Programmatic
-    public void act(Post post)
+    // Extension method for Blog:
+    public static void deletePost(Blog thiz, Post post)
     {
-        repositoryService.removeAndFlush(post);
+        ApplicationContextHelper.getBean(RepositoryService.class).removeAndFlush(post);
     }
 }
