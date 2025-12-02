@@ -13,6 +13,8 @@ import org.apache.causeway.applib.services.repository.RepositoryService;
 import org.apache.causeway.applib.services.title.TitleService;
 
 import com.alexbalmus.acbblog.modules.blog.domain.post.Post;
+import com.alexbalmus.acbblog.modules.blog.domain.blog.Blog;
+
 
 @Action(
     semantics = SemanticsOf.NON_IDEMPOTENT_ARE_YOU_SURE
@@ -32,10 +34,12 @@ public class Post_delete
     @Inject MessageService messageService;
     @Inject RepositoryService repositoryService;
 
-    public void act()
+    public Blog act()
     {
         final String title = titleService.titleOf(post);
         messageService.informUser(String.format("'%s' deleted", title));
+        var blogReference = post.getBlog();
         repositoryService.removeAndFlush(post);
+        return blogReference;
     }
 }

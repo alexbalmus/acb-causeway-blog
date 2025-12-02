@@ -40,6 +40,16 @@ import com.alexbalmus.acbblog.modules.blog.domain.homepage.mixins.blog.Blog_dele
 @SuppressWarnings("unused")
 public class BlogsHomePage
 {
+    private static BlogsHomePage instance;
+    public static BlogsHomePage instance()
+    {
+        return instance;
+    }
+
+    {
+        instance = this;
+    }
+
     @Inject Blogs blogs;
     @Inject UserService userService;
     @Inject FactoryService factoryService;
@@ -80,11 +90,12 @@ public class BlogsHomePage
         describedAs = "Deletes this blog and all its posts from the database",
         position = ActionLayout.Position.PANEL
     )
-    public void deleteBlog(@Name final String name)
+    public BlogsHomePage deleteBlog(@Name final String name)
     {
         Optional.ofNullable(blogs.findByNameAndHandle(name,
             userService.currentUser().orElseThrow().name()))
             .ifPresent(blog -> blog.delete());
+        return this;
     }
     @MemberSupport
     public List<String> choices0DeleteBlog()

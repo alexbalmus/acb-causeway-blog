@@ -15,6 +15,7 @@ import org.apache.causeway.applib.services.title.TitleService;
 import com.alexbalmus.acbblog.modules.blog.common.ApplicationContextHelper;
 import com.alexbalmus.acbblog.modules.blog.domain.post.PostsRepository;
 import com.alexbalmus.acbblog.modules.blog.domain.blog.Blog;
+import com.alexbalmus.acbblog.modules.blog.domain.homepage.BlogsHomePage;
 
 
 @Action(
@@ -38,19 +39,21 @@ public class Blog_delete
     @Inject PostsRepository postsRepository;
     @Inject FactoryService factoryService;
 
-    public void act()
+    public BlogsHomePage act()
     {
         deletePosts();
 
         final String title = titleService.titleOf(blog);
         messageService.informUser(String.format("'%s' and its posts have been deleted", title));
         repositoryService.removeAndFlush(blog);
+        return BlogsHomePage.instance();
     }
 
-    private void deletePosts()
+    private Blog deletePosts()
     {
         postsRepository.findByBlog(blog)
             .forEach(post -> blog.deletePost(post));
+        return blog;
     }
 
     // Extension method for Blog:
