@@ -8,6 +8,9 @@ import jakarta.inject.Named;
 
 import lombok.experimental.ExtensionMethod;
 
+import org.springframework.core.env.Environment;
+import org.springframework.core.env.Profiles;
+
 import org.apache.causeway.applib.annotation.Action;
 import org.apache.causeway.applib.annotation.ActionLayout;
 import org.apache.causeway.applib.annotation.Collection;
@@ -40,6 +43,8 @@ import com.alexbalmus.acbblog.modules.blog.domain.homepage.mixins.blog.Blog_dele
 @SuppressWarnings("unused")
 public class BlogsHomePage
 {
+    private static final String DEV_PROFILE = "Dev";
+
     private static BlogsHomePage instance;
     public static BlogsHomePage instance()
     {
@@ -53,6 +58,7 @@ public class BlogsHomePage
     @Inject Blogs blogs;
     @Inject UserService userService;
     @Inject FactoryService factoryService;
+    @Inject Environment environment;
 
     @ObjectSupport
     public String title()
@@ -76,11 +82,19 @@ public class BlogsHomePage
     @MemberSupport
     public String default0Create()
     {
+        if (!isDevProfileActive())
+        {
+            return null;
+        }
         return "My Blog 001";
     }
     @MemberSupport
     public String default1Create()
     {
+        if (!isDevProfileActive())
+        {
+            return null;
+        }
         return userService.currentUser().orElseThrow().name();
     }
 
@@ -114,5 +128,10 @@ public class BlogsHomePage
     public String disableDeleteBlog()
     {
         return choices0DeleteBlog().isEmpty() ? "No blogs" : null;
+    }
+
+    private boolean isDevProfileActive()
+    {
+        return environment.acceptsProfiles(Profiles.of(DEV_PROFILE));
     }
 }

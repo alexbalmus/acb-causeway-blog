@@ -9,7 +9,7 @@
             <mb3:named>ACB Blog</mb3:named>
             <mb3:section>
                 <mb3:serviceAction objectType="blog.Blogs" id="create"/>
-                <mb3:serviceAction objectType="blog.Blogs" id="findByName"/>
+                <mb3:serviceAction objectType="blog.Blogs" id="findByNameContaining"/>
                 <mb3:serviceAction objectType="blog.Blogs" id="listAll"/>
             </mb3:section>
         </mb3:menu>

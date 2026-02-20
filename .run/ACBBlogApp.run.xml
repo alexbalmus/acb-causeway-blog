@@ -4,8 +4,6 @@
     <option name="SPRING_BOOT_MAIN_CLASS" value="com.alexbalmus.acbblog.webapp.ACBBlogApp" />
     <option name="VM_PARAMETERS" value="-javaagent:lib/spring-instrument.jar" />
     <option name="WORKING_DIRECTORY" value="file://$MODULE_WORKING_DIR$" />
-    <option name="ALTERNATIVE_JRE_PATH" />
-    <option name="SHORTEN_COMMAND_LINE" value="NONE" />
     <method v="2">
       <option name="Make" enabled="true" />
     </method>

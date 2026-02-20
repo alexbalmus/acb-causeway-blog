@@ -21,6 +21,8 @@
 
     <properties>
         <java.version>25</java.version>
+        <spring-ai.version>1.1.2</spring-ai.version>
+
         <!-- https://stackoverflow.com/questions/38983934/cannot-get-maven-project-version-property-in-a-spring-application-with-value/38983935#38983935 -->
         <resource.delimiter>^</resource.delimiter>
     </properties>
@@ -70,7 +72,30 @@
         </plugins>
     </build>
 
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.springframework.ai</groupId>
+                <artifactId>spring-ai-bom</artifactId>
+                <version>${spring-ai.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
     <dependencies>
+
+        <dependency>
+            <groupId>org.springframework.ai</groupId>
+            <artifactId>spring-ai-starter-model-openai</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-starter-logging</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
 
         <dependency>
             <groupId>org.apache.causeway.mavendeps</groupId>
@@ -125,6 +150,12 @@
     </dependencies>
 
     <profiles>
+        <profile>
+            <id>Dev</id>
+        </profile>
+        <profile>
+            <id>Ai</id>
+        </profile>
         <profile>
             <id>deploy-to-docker-io</id>
             <activation>

@@ -6,8 +6,10 @@ import jakarta.annotation.Priority;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
 
-import com.alexbalmus.acbblog.modules.blog.types.Handle;
-import com.alexbalmus.acbblog.modules.blog.types.Name;
+import lombok.RequiredArgsConstructor;
+
+import org.springframework.core.env.Environment;
+import org.springframework.core.env.Profiles;
 
 import org.apache.causeway.applib.annotation.Action;
 import org.apache.causeway.applib.annotation.ActionLayout;
@@ -20,7 +22,9 @@ import org.apache.causeway.applib.annotation.SemanticsOf;
 import org.apache.causeway.applib.services.repository.RepositoryService;
 import org.apache.causeway.applib.services.user.UserService;
 
-import lombok.RequiredArgsConstructor;
+import com.alexbalmus.acbblog.modules.blog.types.Handle;
+import com.alexbalmus.acbblog.modules.blog.types.Name;
+
 
 @Named("blog.Blogs")
 @DomainService()
@@ -29,9 +33,12 @@ import lombok.RequiredArgsConstructor;
 @SuppressWarnings("unused")
 public class Blogs
 {
+    public static final String DEV_PROFILE = "Dev";
+
     private final RepositoryService repositoryService;
     private final BlogsRepository blogsRepository;
     private final UserService userService;
+    private final Environment environment;
 
     @Action(semantics = SemanticsOf.NON_IDEMPOTENT)
     @ActionLayout(promptStyle = PromptStyle.DIALOG_MODAL)
@@ -42,14 +49,22 @@ public class Blogs
     @MemberSupport
     public String default0Create()
     {
+        if (!isDevProfileActive())
+        {
+            return null;
+        }
         return "My Blog 001";
     }
+
     @MemberSupport
     public String default1Create()
     {
+        if (!isDevProfileActive())
+        {
+            return null;
+        }
         return userService.currentUser().orElseThrow().name();
     }
-
 
     @Action(semantics = SemanticsOf.SAFE)
     @ActionLayout(promptStyle = PromptStyle.DIALOG_SIDEBAR)
@@ -71,4 +86,8 @@ public class Blogs
         return blogsRepository.findAllByHandle(userService.currentUser().orElseThrow().name());
     }
 
+    private boolean isDevProfileActive()
+    {
+        return environment.acceptsProfiles(Profiles.of(DEV_PROFILE));
+    }
 }

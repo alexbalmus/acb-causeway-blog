@@ -1,3 +1,8 @@
 Experimenting with Apache Causeway by creating a blogging platform.
-
 https://causeway.apache.org
+
+Spring profiles:
+
+- "Dev": enables automatic content generation for testing purposes
+- "Ai": enables Spring Ai features like automatic Ai content generation (when paired with "Dev" profile) or Ai moderation
+
