@@ -1,4 +1,4 @@
-package com.alexbalmus.acbblog.modules.blog.domain.homepage.mixins.post;
+package com.alexbalmus.acbblog.modules.blog.domain.mixins.post;
 
 import jakarta.inject.Inject;
 

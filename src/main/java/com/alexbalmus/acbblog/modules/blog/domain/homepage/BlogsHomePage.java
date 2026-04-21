@@ -32,7 +32,7 @@ import com.alexbalmus.acbblog.modules.blog.domain.blog.Blog;
 import com.alexbalmus.acbblog.modules.blog.domain.blog.Blogs;
 import com.alexbalmus.acbblog.modules.blog.types.Handle;
 import com.alexbalmus.acbblog.modules.blog.types.Name;
-import com.alexbalmus.acbblog.modules.blog.domain.homepage.mixins.blog.Blog_delete;
+import com.alexbalmus.acbblog.modules.blog.domain.mixins.blog.Blog_delete;
 
 
 @Named("blog.BlogsHomePage")

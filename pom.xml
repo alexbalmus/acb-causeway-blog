@@ -21,7 +21,7 @@
 
     <properties>
         <java.version>25</java.version>
-        <spring-ai.version>1.1.2</spring-ai.version>
+        <spring-ai.version>1.1.3</spring-ai.version>
 
         <!-- https://stackoverflow.com/questions/38983934/cannot-get-maven-project-version-property-in-a-spring-application-with-value/38983935#38983935 -->
         <resource.delimiter>^</resource.delimiter>

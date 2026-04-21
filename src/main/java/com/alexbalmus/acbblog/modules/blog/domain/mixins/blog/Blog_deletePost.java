@@ -1,4 +1,4 @@
-package com.alexbalmus.acbblog.modules.blog.domain.homepage.mixins.blog;
+package com.alexbalmus.acbblog.modules.blog.domain.mixins.blog;
 
 import java.util.List;
 import java.util.stream.Collectors;

@@ -38,7 +38,7 @@ public class SpringAiPostDefaultsGenerator implements PostDefaultsGenerator
             final String titlePrompt =
                 """
                 Generate a concise title for a technical Java blog post.
-                Return plain text only, no quotes, no markdown, max 80 characters.
+                Return plain text only, no quotes, no markdown, max 40 characters.
                 """;
 
             final String contentPrompt =
@@ -49,6 +49,7 @@ public class SpringAiPostDefaultsGenerator implements PostDefaultsGenerator
                 - 2 to 4 short paragraphs
                 - practical and accurate
                 - plain test only (no markdown headings, no code fences)
+                - IMPORTANT: offer JUST the blog content, no confirmations, nothing else
                 """;
 
             final String title =
