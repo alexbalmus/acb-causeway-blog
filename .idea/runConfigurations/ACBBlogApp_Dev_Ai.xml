@@ -1,5 +1,6 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="ACBBlogApp" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot">
+  <configuration default="false" name="ACBBlogApp_Dev_Ai" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot">
+    <option name="ACTIVE_PROFILES" value="Dev,Ai" />
     <module name="acb-blog" />
     <option name="SPRING_BOOT_MAIN_CLASS" value="com.alexbalmus.acbblog.webapp.ACBBlogApp" />
     <option name="WORKING_DIRECTORY" value="file://$MODULE_WORKING_DIR$" />
