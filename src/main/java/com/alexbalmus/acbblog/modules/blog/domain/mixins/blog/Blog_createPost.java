@@ -68,15 +68,14 @@ public class Blog_createPost
     @Inject ObjectProvider<PostDefaultsGenerator> postDefaultsGeneratorProvider;
     @Inject ObjectProvider<PostSafetyChecker> postSafetyCheckerProvider;
 
-    public Blog act(@Name final String title, @Content final String content)
+    public Post act(@Name final String title, @Content final String content)
     {
         String safetyCheckResult = performSafetyCheck(title, content);
         if (safetyCheckResult != null)
         {
             throw new IllegalArgumentException(safetyCheckResult);
         }
-        repositoryService.persist(new Post(blog, title, content));
-        return blog;
+        return repositoryService.persist(new Post(blog, title, content));
     }
     public String validate0Act(final String title)
     {

@@ -2,6 +2,8 @@ package com.alexbalmus.acbblog.modules.blog.ai;
 
 import java.util.Optional;
 
+import jakarta.inject.Inject;
+
 import org.apache.logging.log4j.util.Strings;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.beans.factory.ObjectProvider;
@@ -10,12 +12,16 @@ import org.springframework.stereotype.Component;
 
 import com.alexbalmus.acbblog.modules.blog.common.post.defaults.PostDefaults;
 import com.alexbalmus.acbblog.modules.blog.common.post.defaults.PostDefaultsGenerator;
+import com.alexbalmus.acbblog.modules.blog.common.TextSanitizer;
 
 @Component
 @Profile("Ai")
 public class SpringAiPostDefaultsGenerator implements PostDefaultsGenerator
 {
     private final ObjectProvider<ChatClient.Builder> chatClientBuilderProvider;
+
+    @Inject
+    TextSanitizer textSanitizer;
 
     public SpringAiPostDefaultsGenerator(final ObjectProvider<ChatClient.Builder> chatClientBuilderProvider)
     {
@@ -38,12 +44,16 @@ public class SpringAiPostDefaultsGenerator implements PostDefaultsGenerator
             final String titlePrompt =
                 """
                 Generate a concise title for a technical Java blog post.
-                Return plain text only, no quotes, no markdown, max 40 characters.
+                Constraints:
+                - plain text only
+                - no quotes
+                - IMPORTANT: title must have maximum 50 characters
+                - IMPORTANT: offer JUST ONE title, no confirmations, no alternatives, nothing else
                 """;
 
             final String contentPrompt =
                 """
-                Generate content for a Java-related blog post.
+                Generate content for a Java-related blog post having the title %s.
                 Constraints:
                 - audience: developers
                 - 2 to 4 short paragraphs
@@ -58,18 +68,23 @@ public class SpringAiPostDefaultsGenerator implements PostDefaultsGenerator
                     .call()
                     .content();
 
-            final String content =
-                chatClient.prompt()
-                    .user(contentPrompt)
-                    .call()
-                    .content();
-
-            if (Strings.isBlank(title) || Strings.isBlank(content))
+            if (Strings.isBlank(title))
             {
                 return Optional.empty();
             }
 
-            return Optional.of(new PostDefaults(title, content));
+            final String content =
+                chatClient.prompt()
+                    .user(contentPrompt.formatted(title))
+                    .call()
+                    .content();
+
+            if (Strings.isBlank(content))
+            {
+                return Optional.empty();
+            }
+
+            return Optional.of(new PostDefaults(textSanitizer.sanitize(title), textSanitizer.sanitize(content)));
         }
         catch (Exception e)
         {

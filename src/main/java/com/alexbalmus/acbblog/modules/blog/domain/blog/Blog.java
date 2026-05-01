@@ -63,7 +63,7 @@ public class Blog implements Comparable<Blog>
     private String name;
 
     @Setter
-    @Column(length = Name.MAX_LEN, nullable = false, name = "handle")
+    @Column(length = Handle.MAX_LEN, nullable = false, name = "handle")
     private String handle;
 
 

@@ -41,8 +41,9 @@ public class SpringAiPostSafetyChecker implements PostSafetyChecker
 
             final String prompt =
                 """
-                You are a strict safety moderator for a general audience blog.
+                You are a safety moderator for a general audience blog.
                 Evaluate whether the following title and content contain inappropriate content such as (but not limited to) profanity, references to drugs etc.
+                IMPORTANT: only declare it unsafe if you have valid reasons to do so; if unsure, return SAFE.
                 
                 Return exactly one line:
                 SAFE
@@ -54,7 +55,7 @@ public class SpringAiPostSafetyChecker implements PostSafetyChecker
                 
                 Content:
                 %s
-                """.formatted(sanitize(title), sanitize(content));
+                """.formatted(title, content);
 
             final String response =
                 chatClient.prompt()
@@ -92,10 +93,5 @@ public class SpringAiPostSafetyChecker implements PostSafetyChecker
         {
             return SafetyAssessment.blocked(UNABLE_TO_ASSESS_CONTENT_SAFETY);
         }
-    }
-
-    public static String sanitize(final String value)
-    {
-        return value == null ? "" : value.trim();
     }
 }
