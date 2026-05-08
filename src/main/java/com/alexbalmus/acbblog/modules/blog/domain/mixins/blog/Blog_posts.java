@@ -16,7 +16,13 @@ import com.alexbalmus.acbblog.modules.blog.domain.post.PostsRepository;
 
 
 @Collection
-@CollectionLayout(defaultView = "table", tableDecorator = TableDecorator.DatatablesNet.class)
+@CollectionLayout(
+    defaultView = "table",
+    describedAs = "Posts in this blog",
+    navigableSubtree = "1",
+    paged = 10,
+    tableDecorator = TableDecorator.DatatablesNet.class
+)
 @RequiredArgsConstructor(onConstructor_ = {@Inject} )
 @SuppressWarnings("unused")
 public class Blog_posts

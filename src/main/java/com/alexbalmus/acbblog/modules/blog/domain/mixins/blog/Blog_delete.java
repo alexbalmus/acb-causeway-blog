@@ -22,8 +22,10 @@ import com.alexbalmus.acbblog.modules.blog.domain.homepage.BlogsHomePage;
     semantics = SemanticsOf.NON_IDEMPOTENT_ARE_YOU_SURE
 )
 @ActionLayout(
+    cssClassFa = "fa-solid fa-trash",
     fieldSetId = LayoutConstants.FieldSetId.IDENTITY,
     describedAs = "Deletes this blog and all its posts from the database",
+    named = "Delete Blog",
     position = ActionLayout.Position.PANEL
 )
 @RequiredArgsConstructor(onConstructor_ = {@Inject} )

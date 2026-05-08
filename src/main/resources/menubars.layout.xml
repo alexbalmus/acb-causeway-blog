@@ -6,11 +6,17 @@
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <mb3:primary>
         <mb3:menu>
-            <mb3:named>ACB Blog</mb3:named>
+            <mb3:named>Blogs</mb3:named>
             <mb3:section>
-                <mb3:serviceAction objectType="blog.Blogs" id="create"/>
-                <mb3:serviceAction objectType="blog.Blogs" id="findByNameContaining"/>
-                <mb3:serviceAction objectType="blog.Blogs" id="listAll"/>
+                <mb3:serviceAction objectType="blog.Blogs" id="create">
+                    <cpt:named>New Blog</cpt:named>
+                </mb3:serviceAction>
+                <mb3:serviceAction objectType="blog.Blogs" id="findByNameContaining">
+                    <cpt:named>Find Blogs</cpt:named>
+                </mb3:serviceAction>
+                <mb3:serviceAction objectType="blog.Blogs" id="listAll">
+                    <cpt:named>My Blogs</cpt:named>
+                </mb3:serviceAction>
             </mb3:section>
         </mb3:menu>
         <mb3:menu unreferencedActions="true">

@@ -38,7 +38,10 @@ import com.alexbalmus.acbblog.modules.blog.domain.mixins.blog.Blog_delete;
 @Named("blog.BlogsHomePage")
 @DomainObject(nature = Nature.VIEW_MODEL)
 @HomePage
-@DomainObjectLayout()
+@DomainObjectLayout(
+    cssClassFa = "fa-solid fa-house",
+    describedAs = "Your blogs"
+)
 @ExtensionMethod(Blog_delete.class)
 @SuppressWarnings("unused")
 public class BlogsHomePage
@@ -63,18 +66,29 @@ public class BlogsHomePage
     @ObjectSupport
     public String title()
     {
-        return getBlogs().size() + " blogs";
+        int blogCount = getBlogs().size();
+        return blogCount == 1 ? "1 blog" : blogCount + " blogs";
     }
 
     @Collection
-    @CollectionLayout(tableDecorator = TableDecorator.DatatablesNet.class)
+    @CollectionLayout(
+        named = "My Blogs",
+        describedAs = "Blogs owned by the current user",
+        paged = 10,
+        tableDecorator = TableDecorator.DatatablesNet.class
+    )
     public List<Blog> getBlogs()
     {
         return blogs.listAll();
     }
 
     @Action(semantics = SemanticsOf.NON_IDEMPOTENT)
-    @ActionLayout(promptStyle = PromptStyle.DIALOG_MODAL)
+    @ActionLayout(
+        cssClassFa = "fa-solid fa-plus",
+        describedAs = "Create a new blog",
+        named = "New Blog",
+        promptStyle = PromptStyle.DIALOG_MODAL
+    )
     public Blog create(@Name final String name, @Handle final String handle)
     {
         return blogs.create(name, handle);
@@ -100,8 +114,10 @@ public class BlogsHomePage
 
     @Action(semantics = SemanticsOf.NON_IDEMPOTENT_ARE_YOU_SURE)
     @ActionLayout(
+        cssClassFa = "fa-solid fa-trash",
         fieldSetId = LayoutConstants.FieldSetId.IDENTITY,
         describedAs = "Deletes this blog and all its posts from the database",
+        named = "Delete Blog",
         position = ActionLayout.Position.PANEL
     )
     public BlogsHomePage deleteBlog(@Name final String name)

@@ -23,13 +23,16 @@ import org.springframework.data.util.ProxyUtils;
 
 import org.apache.causeway.applib.annotation.Action;
 import org.apache.causeway.applib.annotation.ActionLayout;
+import org.apache.causeway.applib.annotation.BookmarkPolicy;
 import org.apache.causeway.applib.annotation.DomainObject;
 import org.apache.causeway.applib.annotation.DomainObjectLayout;
 import org.apache.causeway.applib.annotation.MemberSupport;
+import org.apache.causeway.applib.annotation.Navigable;
 import org.apache.causeway.applib.annotation.PropertyLayout;
 import org.apache.causeway.applib.annotation.Publishing;
 import org.apache.causeway.applib.annotation.SemanticsOf;
 import org.apache.causeway.applib.annotation.Title;
+import org.apache.causeway.applib.annotation.Where;
 import org.apache.causeway.applib.layout.LayoutConstants;
 import org.apache.causeway.persistence.jpa.applib.integration.CausewayEntityListener;
 
@@ -46,7 +49,11 @@ import com.alexbalmus.acbblog.modules.blog.types.Name;
 @EntityListeners(CausewayEntityListener.class)
 @Named("blog.Post")
 @DomainObject()
-@DomainObjectLayout()
+@DomainObjectLayout(
+    bookmarking = BookmarkPolicy.AS_CHILD,
+    cssClassFa = "fa-solid fa-file-lines",
+    describedAs = "A post published within a blog"
+)
 @SuppressWarnings("unused")
 public class Post implements Comparable<Post>
 {
@@ -61,7 +68,14 @@ public class Post implements Comparable<Post>
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "blog_id")
-    @PropertyLayout(fieldSetId =  LayoutConstants.FieldSetId.IDENTITY, sequence = "1")
+    @PropertyLayout(
+        fieldSetId =  LayoutConstants.FieldSetId.IDENTITY,
+        fieldSetName = "Post",
+        hidden = Where.REFERENCES_PARENT,
+        sequence = "1",
+        navigable = Navigable.PARENT,
+        describedAs = "The blog this post belongs to"
+    )
     @Getter @Setter
     private Blog blog;
 
@@ -84,16 +98,26 @@ public class Post implements Comparable<Post>
     }
 
 
-    @Title(prepend = "Object: ")
+    @Title(prepend = "Post: ")
     @Name
-    @PropertyLayout(fieldSetId = LayoutConstants.FieldSetId.IDENTITY, sequence = "2")
+    @PropertyLayout(
+        fieldSetId = LayoutConstants.FieldSetId.IDENTITY,
+        fieldSetName = "Post",
+        sequence = "2",
+        describedAs = "The post title"
+    )
     public String getTitle()
     {
         return title;
     }
 
     @Content
-    @PropertyLayout(fieldSetId = LayoutConstants.FieldSetId.DETAILS, sequence = "1")
+    @PropertyLayout(
+        fieldSetId = LayoutConstants.FieldSetId.DETAILS,
+        fieldSetName = "Content",
+        sequence = "1",
+        describedAs = "The body of the post"
+    )
     public String getContent()
     {
         return content;
@@ -105,7 +129,9 @@ public class Post implements Comparable<Post>
     )
     @ActionLayout(
         associateWith = "title",
-        describedAs = "Updates the object's title"
+        cssClassFa = "fa-solid fa-pencil",
+        describedAs = "Renames this post",
+        named = "Rename"
     )
     public Post updateTitle(@Name final String name)
     {

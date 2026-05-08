@@ -27,7 +27,13 @@ import com.alexbalmus.acbblog.modules.blog.domain.post.PostsRepository;
     commandPublishing = Publishing.ENABLED,
     executionPublishing = Publishing.ENABLED
 )
-@ActionLayout(associateWith = "blog", sequence = "2")
+@ActionLayout(
+    associateWith = "blog",
+    cssClassFa = "fa-solid fa-trash",
+    describedAs = "Delete a post from this blog",
+    named = "Delete Post",
+    sequence = "2"
+)
 @RequiredArgsConstructor(onConstructor_ = {@Inject} )
 @SuppressWarnings("unused")
 public class Blog_deletePost

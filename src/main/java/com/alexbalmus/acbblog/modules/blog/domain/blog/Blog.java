@@ -20,6 +20,7 @@ import lombok.Setter;
 
 import org.apache.causeway.applib.annotation.Action;
 import org.apache.causeway.applib.annotation.ActionLayout;
+import org.apache.causeway.applib.annotation.BookmarkPolicy;
 import org.apache.causeway.applib.annotation.DomainObject;
 import org.apache.causeway.applib.annotation.DomainObjectLayout;
 import org.apache.causeway.applib.annotation.MemberSupport;
@@ -45,7 +46,11 @@ import com.alexbalmus.acbblog.modules.blog.types.Handle;
 @EntityListeners(CausewayEntityListener.class)
 @Named("blog.Blog")
 @DomainObject()
-@DomainObjectLayout()
+@DomainObjectLayout(
+    bookmarking = BookmarkPolicy.AS_ROOT,
+    cssClassFa = "fa-solid fa-rss",
+    describedAs = "A personal blog containing posts"
+)
 @SuppressWarnings("unused")
 public class Blog implements Comparable<Blog>
 {
@@ -78,7 +83,12 @@ public class Blog implements Comparable<Blog>
 
     @Title(prepend = "Blog: ")
     @Name
-    @PropertyLayout(fieldSetId = LayoutConstants.FieldSetId.IDENTITY, sequence = "1")
+    @PropertyLayout(
+        fieldSetId = LayoutConstants.FieldSetId.IDENTITY,
+        fieldSetName = "Blog",
+        sequence = "1",
+        describedAs = "The public name of this blog"
+    )
     public String getName()
     {
         return name;
@@ -90,7 +100,9 @@ public class Blog implements Comparable<Blog>
     )
     @ActionLayout(
         associateWith = "name",
-        describedAs = "Updates the object's name"
+        cssClassFa = "fa-solid fa-pencil",
+        describedAs = "Renames this blog",
+        named = "Rename"
     )
     public Blog updateName(@Name final String name)
     {
@@ -104,7 +116,12 @@ public class Blog implements Comparable<Blog>
     }
 
     @Handle
-    @PropertyLayout(fieldSetId = LayoutConstants.FieldSetId.IDENTITY, sequence = "2")
+    @PropertyLayout(
+        fieldSetId = LayoutConstants.FieldSetId.IDENTITY,
+        fieldSetName = "Blog",
+        sequence = "2",
+        describedAs = "The owner handle for this blog"
+    )
     public String getHandle()
     {
         return handle;

@@ -9,6 +9,11 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface PostsRepository extends JpaRepository<Post, Long>
 {
-    List<Post> findByBlog(Blog blog);
+    List<Post> findByBlogOrderByTitleAsc(Blog blog);
     Optional<Post> findByBlogAndTitle(Blog blog, String title);
+
+    default List<Post> findByBlog(Blog blog)
+    {
+        return findByBlogOrderByTitleAsc(blog);
+    }
 }

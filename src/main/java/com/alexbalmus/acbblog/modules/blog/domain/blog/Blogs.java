@@ -14,6 +14,7 @@ import org.springframework.core.env.Profiles;
 import org.apache.causeway.applib.annotation.Action;
 import org.apache.causeway.applib.annotation.ActionLayout;
 import org.apache.causeway.applib.annotation.DomainService;
+import org.apache.causeway.applib.annotation.DomainServiceLayout;
 import org.apache.causeway.applib.annotation.MemberSupport;
 import org.apache.causeway.applib.annotation.PriorityPrecedence;
 import org.apache.causeway.applib.annotation.PromptStyle;
@@ -28,6 +29,7 @@ import com.alexbalmus.acbblog.modules.blog.types.Name;
 
 @Named("blog.Blogs")
 @DomainService()
+@DomainServiceLayout(named = "Blogs")
 @Priority(PriorityPrecedence.EARLY)
 @RequiredArgsConstructor(onConstructor_ = {@Inject} )
 @SuppressWarnings("unused")
@@ -41,7 +43,12 @@ public class Blogs
     private final Environment environment;
 
     @Action(semantics = SemanticsOf.NON_IDEMPOTENT)
-    @ActionLayout(promptStyle = PromptStyle.DIALOG_MODAL)
+    @ActionLayout(
+        cssClassFa = "fa-solid fa-plus",
+        describedAs = "Create a new blog",
+        named = "New Blog",
+        promptStyle = PromptStyle.DIALOG_MODAL
+    )
     public Blog create(@Name final String name, @Handle final String handle)
     {
         return repositoryService.persist(new Blog(name, handle));
@@ -67,14 +74,24 @@ public class Blogs
     }
 
     @Action(semantics = SemanticsOf.SAFE)
-    @ActionLayout(promptStyle = PromptStyle.DIALOG_SIDEBAR)
+    @ActionLayout(
+        cssClassFa = "fa-solid fa-magnifying-glass",
+        describedAs = "Find blogs by name",
+        named = "Find Blogs",
+        promptStyle = PromptStyle.DIALOG_SIDEBAR
+    )
     public List<Blog> findByNameContaining(@Name final String name)
     {
         return blogsRepository.findByNameContaining(name);
     }
 
     @Action(semantics = SemanticsOf.SAFE)
-    @ActionLayout(promptStyle = PromptStyle.DIALOG_SIDEBAR)
+    @ActionLayout(
+        cssClassFa = "fa-solid fa-magnifying-glass",
+        describedAs = "Find one blog by name and owner handle",
+        named = "Find Blog",
+        promptStyle = PromptStyle.DIALOG_SIDEBAR
+    )
     public Blog findByNameAndHandle(@Name final String name, @Handle String handle)
     {
         return blogsRepository.findByNameAndHandle(name, handle);

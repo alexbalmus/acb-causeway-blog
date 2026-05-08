@@ -36,6 +36,9 @@ import com.alexbalmus.acbblog.modules.blog.common.post.safety.SafetyAssessment;
 )
 @ActionLayout(
     associateWith = "blog",
+    cssClassFa = "fa-solid fa-plus",
+    describedAs = "Create a post in this blog",
+    named = "New Post",
     sequence = "1",
     promptStyle = PromptStyle.DIALOG_MODAL
 )
