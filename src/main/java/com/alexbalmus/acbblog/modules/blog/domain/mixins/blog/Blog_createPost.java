@@ -1,5 +1,7 @@
 package com.alexbalmus.acbblog.modules.blog.domain.mixins.blog;
 
+import java.awt.image.BufferedImage;
+
 import jakarta.inject.Inject;
 
 import lombok.RequiredArgsConstructor;
@@ -18,9 +20,12 @@ import org.apache.causeway.applib.annotation.Publishing;
 import org.apache.causeway.applib.annotation.SemanticsOf;
 import org.apache.causeway.applib.services.repository.RepositoryService;
 
+import com.alexbalmus.acbblog.modules.blog.common.ImageSupport;
 import com.alexbalmus.acbblog.modules.blog.domain.blog.Blog;
 import com.alexbalmus.acbblog.modules.blog.types.Content;
 import com.alexbalmus.acbblog.modules.blog.types.Name;
+import com.alexbalmus.acbblog.modules.blog.types.Picture;
+import com.alexbalmus.acbblog.modules.blog.types.PictureDescription;
 import com.alexbalmus.acbblog.modules.blog.domain.post.Post;
 import com.alexbalmus.acbblog.modules.blog.domain.post.PostsRepository;
 import com.alexbalmus.acbblog.modules.blog.common.post.defaults.PostDefaults;
@@ -71,14 +76,23 @@ public class Blog_createPost
     @Inject ObjectProvider<PostDefaultsGenerator> postDefaultsGeneratorProvider;
     @Inject ObjectProvider<PostSafetyChecker> postSafetyCheckerProvider;
 
-    public Post act(@Name final String title, @Content final String content)
+    public Post act(
+        @Name final String title,
+        @Content final String content,
+        @Picture final BufferedImage picture,
+        @PictureDescription final String pictureDescription)
     {
         String safetyCheckResult = performSafetyCheck(title, content);
         if (safetyCheckResult != null)
         {
             throw new IllegalArgumentException(safetyCheckResult);
         }
-        return repositoryService.persist(new Post(blog, title, content));
+        return repositoryService.persist(new Post(
+            blog,
+            title,
+            content,
+            ImageSupport.toPngBlob(picture, "post-picture.png"),
+            pictureDescription));
     }
     public String validate0Act(final String title)
     {

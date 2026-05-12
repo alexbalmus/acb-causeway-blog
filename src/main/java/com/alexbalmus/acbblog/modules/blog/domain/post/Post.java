@@ -1,10 +1,14 @@
 package com.alexbalmus.acbblog.modules.blog.domain.post;
 
+import java.awt.image.BufferedImage;
 import java.util.Comparator;
 import java.util.Objects;
 
 import jakarta.inject.Named;
+import jakarta.persistence.AttributeOverride;
+import jakarta.persistence.AttributeOverrides;
 import jakarta.persistence.Column;
+import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.FetchType;
@@ -34,11 +38,16 @@ import org.apache.causeway.applib.annotation.SemanticsOf;
 import org.apache.causeway.applib.annotation.Title;
 import org.apache.causeway.applib.annotation.Where;
 import org.apache.causeway.applib.layout.LayoutConstants;
+import org.apache.causeway.applib.value.Blob;
 import org.apache.causeway.persistence.jpa.applib.integration.CausewayEntityListener;
+import org.apache.causeway.persistence.jpa.applib.types.BlobJpaEmbeddable;
 
+import com.alexbalmus.acbblog.modules.blog.common.ImageSupport;
 import com.alexbalmus.acbblog.modules.blog.domain.blog.Blog;
 import com.alexbalmus.acbblog.modules.blog.types.Content;
 import com.alexbalmus.acbblog.modules.blog.types.Name;
+import com.alexbalmus.acbblog.modules.blog.types.Picture;
+import com.alexbalmus.acbblog.modules.blog.types.PictureDescription;
 
 
 @Entity
@@ -87,14 +96,38 @@ public class Post implements Comparable<Post>
     @Column(length = Content.MAX_LEN, name = "content")
     private String content;
 
+    @Embedded
+    @AttributeOverrides({
+        @AttributeOverride(name = "mimeType", column = @Column(name = "picture_mime_type", length = 255)),
+        @AttributeOverride(name = "bytes", column = @Column(name = "picture_bytes")),
+        @AttributeOverride(name = "name", column = @Column(name = "picture_name", length = 255))
+    })
+    private BlobJpaEmbeddable picture;
+
+    @Setter
+    @Column(length = PictureDescription.MAX_LEN, name = "picture_description")
+    private String pictureDescription;
+
 
     protected Post(){}
 
     public Post(final Blog blog, final String title, final String content)
     {
+        this(blog, title, content, null, null);
+    }
+
+    public Post(
+        final Blog blog,
+        final String title,
+        final String content,
+        final Blob picture,
+        final String pictureDescription)
+    {
         this.blog = blog;
         this.title = title;
         this.content = content;
+        setPicture(picture);
+        this.pictureDescription = pictureDescription;
     }
 
 
@@ -121,6 +154,42 @@ public class Post implements Comparable<Post>
     public String getContent()
     {
         return content;
+    }
+
+    @Picture
+    @PropertyLayout(
+        fieldSetId = "media",
+        fieldSetName = "Picture",
+        sequence = "1",
+        describedAs = "Optional picture for this post"
+    )
+    public BufferedImage getPictureImage()
+    {
+        return ImageSupport.boundedPreview(getPicture());
+    }
+
+    @Picture
+    @PropertyLayout(hidden = Where.EVERYWHERE)
+    public Blob getPicture()
+    {
+        return BlobJpaEmbeddable.toBlob(picture);
+    }
+
+    public void setPicture(final Blob picture)
+    {
+        this.picture = BlobJpaEmbeddable.fromBlob(picture);
+    }
+
+    @PictureDescription
+    @PropertyLayout(
+        fieldSetId = "media",
+        fieldSetName = "Picture",
+        sequence = "2",
+        describedAs = "Optional description for the picture"
+    )
+    public String getPictureDescription()
+    {
+        return pictureDescription;
     }
 
     @Action(
