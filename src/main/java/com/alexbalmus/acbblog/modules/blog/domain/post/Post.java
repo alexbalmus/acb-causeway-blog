@@ -32,6 +32,8 @@ import org.apache.causeway.applib.annotation.DomainObject;
 import org.apache.causeway.applib.annotation.DomainObjectLayout;
 import org.apache.causeway.applib.annotation.MemberSupport;
 import org.apache.causeway.applib.annotation.Navigable;
+import org.apache.causeway.applib.annotation.Optionality;
+import org.apache.causeway.applib.annotation.Property;
 import org.apache.causeway.applib.annotation.PropertyLayout;
 import org.apache.causeway.applib.annotation.Publishing;
 import org.apache.causeway.applib.annotation.SemanticsOf;
@@ -39,6 +41,7 @@ import org.apache.causeway.applib.annotation.Title;
 import org.apache.causeway.applib.annotation.Where;
 import org.apache.causeway.applib.layout.LayoutConstants;
 import org.apache.causeway.applib.value.Blob;
+import org.apache.causeway.applib.value.Markup;
 import org.apache.causeway.persistence.jpa.applib.integration.CausewayEntityListener;
 import org.apache.causeway.persistence.jpa.applib.types.BlobJpaEmbeddable;
 
@@ -156,16 +159,18 @@ public class Post implements Comparable<Post>
         return content;
     }
 
-    @Picture
+    @Property(optionality = Optionality.OPTIONAL)
     @PropertyLayout(
         fieldSetId = "media",
         fieldSetName = "Picture",
+        hidden = Where.ALL_TABLES,
+        named = "Picture",
         sequence = "1",
         describedAs = "Optional picture for this post"
     )
-    public BufferedImage getPictureImage()
+    public Markup getPicturePreview()
     {
-        return ImageSupport.boundedPreview(getPicture());
+        return ImageSupport.imagePreview(getPicture());
     }
 
     @Picture
@@ -190,6 +195,58 @@ public class Post implements Comparable<Post>
     public String getPictureDescription()
     {
         return pictureDescription;
+    }
+
+    @Action(
+        semantics = SemanticsOf.IDEMPOTENT,
+        executionPublishing = Publishing.ENABLED
+    )
+    @ActionLayout(
+        cssClassFa = "fa-solid fa-image",
+        describedAs = "Changes this post's picture and picture description",
+        fieldSetId = "media",
+        named = "Update Picture",
+        position = ActionLayout.Position.PANEL,
+        promptStyle = org.apache.causeway.applib.annotation.PromptStyle.DIALOG_MODAL
+    )
+    public Post updatePicture(
+        @Picture final BufferedImage picture,
+        @PictureDescription final String pictureDescription)
+    {
+        if (picture != null)
+        {
+            setPicture(ImageSupport.toPngBlob(picture, "post-picture.png"));
+        }
+        setPictureDescription(pictureDescription);
+        return this;
+    }
+    @MemberSupport
+    public String default1UpdatePicture()
+    {
+        return getPictureDescription();
+    }
+
+    @Action(
+        semantics = SemanticsOf.IDEMPOTENT,
+        executionPublishing = Publishing.ENABLED
+    )
+    @ActionLayout(
+        cssClassFa = "fa-solid fa-image",
+        describedAs = "Removes this post's picture and picture description",
+        fieldSetId = "media",
+        named = "Clear Picture",
+        position = ActionLayout.Position.PANEL
+    )
+    public Post clearPicture()
+    {
+        setPicture(null);
+        setPictureDescription(null);
+        return this;
+    }
+    @MemberSupport
+    public String disableClearPicture()
+    {
+        return getPicture() == null && getPictureDescription() == null ? "No picture" : null;
     }
 
     @Action(

@@ -1,19 +1,19 @@
 package com.alexbalmus.acbblog.modules.blog.common;
 
-import java.awt.Graphics2D;
-import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.Base64;
 
 import javax.imageio.ImageIO;
 
 import org.apache.causeway.applib.value.Blob;
+import org.apache.causeway.applib.value.Markup;
 
 public final class ImageSupport
 {
-    private static final int PREVIEW_MAX_WIDTH = 900;
-    private static final int PREVIEW_MAX_HEIGHT = 520;
+    private static final int PREVIEW_MAX_WIDTH = 680;
+    private static final int PREVIEW_MAX_HEIGHT = 385;
 
     private ImageSupport() {}
 
@@ -35,45 +35,28 @@ public final class ImageSupport
         }
     }
 
-    public static BufferedImage boundedPreview(final Blob blob)
+    public static Markup imagePreview(final Blob blob)
     {
         if (blob == null)
         {
-            return null;
+            return Markup.valueOf("");
         }
 
-        return blob.asImage()
-            .map(image -> scaleToFit(image, PREVIEW_MAX_WIDTH, PREVIEW_MAX_HEIGHT))
-            .orElse(null);
+        String mimeType = blob.mimeType().getBaseType();
+        if (!mimeType.startsWith("image/"))
+        {
+            return Markup.valueOf("");
+        }
+
+        String encoded = Base64.getEncoder().encodeToString(blob.bytes());
+        return Markup.valueOf(String.format(
+            "<img alt=\"Post picture\" src=\"data:%s;base64,%s\" " +
+                "style=\"display:block;width:100%%;max-width:%dpx;max-height:%dpx;" +
+                "height:auto;object-fit:contain;margin:0 auto;\"/>",
+            mimeType,
+            encoded,
+            PREVIEW_MAX_WIDTH,
+            PREVIEW_MAX_HEIGHT));
     }
 
-    private static BufferedImage scaleToFit(final BufferedImage image, final int maxWidth, final int maxHeight)
-    {
-        int width = image.getWidth();
-        int height = image.getHeight();
-
-        if (width <= maxWidth && height <= maxHeight)
-        {
-            return image;
-        }
-
-        double scale = Math.min((double) maxWidth / width, (double) maxHeight / height);
-        int scaledWidth = Math.max(1, (int) Math.round(width * scale));
-        int scaledHeight = Math.max(1, (int) Math.round(height * scale));
-
-        BufferedImage scaled = new BufferedImage(scaledWidth, scaledHeight, BufferedImage.TYPE_INT_ARGB);
-        Graphics2D graphics = scaled.createGraphics();
-        try
-        {
-            graphics.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
-            graphics.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
-            graphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-            graphics.drawImage(image, 0, 0, scaledWidth, scaledHeight, null);
-        }
-        finally
-        {
-            graphics.dispose();
-        }
-        return scaled;
-    }
 }
