@@ -53,7 +53,7 @@ public class Blog_delete
 
     private Blog deletePosts()
     {
-        postsRepository.findByBlog(blog)
+        postsRepository.findByBlogOrderByTitleAsc(blog)
             .forEach(post -> blog.deletePost(post));
         return blog;
     }
@@ -61,7 +61,7 @@ public class Blog_delete
     // Extension method for Blog:
     public static void delete(Blog thiz)
     {
-        ApplicationContextHelper.getBean(PostsRepository.class).findByBlog(thiz)
+        ApplicationContextHelper.getBean(PostsRepository.class).findByBlogOrderByTitleAsc(thiz)
             .forEach(post -> thiz.deletePost(post));
         ApplicationContextHelper.getBean(RepositoryService.class).removeAndFlush(thiz);
     }

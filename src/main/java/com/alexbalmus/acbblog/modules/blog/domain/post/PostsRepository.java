@@ -11,9 +11,4 @@ public interface PostsRepository extends JpaRepository<Post, Long>
 {
     List<Post> findByBlogOrderByTitleAsc(Blog blog);
     Optional<Post> findByBlogAndTitle(Blog blog, String title);
-
-    default List<Post> findByBlog(Blog blog)
-    {
-        return findByBlogOrderByTitleAsc(blog);
-    }
 }

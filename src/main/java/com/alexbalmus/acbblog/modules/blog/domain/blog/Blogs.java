@@ -17,12 +17,15 @@ import org.apache.causeway.applib.annotation.DomainService;
 import org.apache.causeway.applib.annotation.DomainServiceLayout;
 import org.apache.causeway.applib.annotation.MemberSupport;
 import org.apache.causeway.applib.annotation.PriorityPrecedence;
+import org.apache.causeway.applib.annotation.Programmatic;
 import org.apache.causeway.applib.annotation.PromptStyle;
 import org.apache.causeway.applib.annotation.RestrictTo;
 import org.apache.causeway.applib.annotation.SemanticsOf;
 import org.apache.causeway.applib.services.repository.RepositoryService;
 import org.apache.causeway.applib.services.user.UserService;
 
+import com.alexbalmus.acbblog.modules.blog.domain.userhandle.UserHandle;
+import com.alexbalmus.acbblog.modules.blog.domain.userhandle.UserHandlesRepository;
 import com.alexbalmus.acbblog.modules.blog.types.Handle;
 import com.alexbalmus.acbblog.modules.blog.types.Name;
 
@@ -39,6 +42,7 @@ public class Blogs
 
     private final RepositoryService repositoryService;
     private final BlogsRepository blogsRepository;
+    private final UserHandlesRepository userHandlesRepository;
     private final UserService userService;
     private final Environment environment;
 
@@ -51,7 +55,45 @@ public class Blogs
     )
     public Blog create(@Name final String name, @Handle final String handle)
     {
+        String validation = validateCreate(name, handle);
+        if (validation != null)
+        {
+            throw new IllegalArgumentException(validation);
+        }
+        ensureCurrentUserHandle(handle);
         return repositoryService.persist(new Blog(name, handle));
+    }
+    @MemberSupport
+    public String validateCreate(final String name, final String handle)
+    {
+        String currentUsername = currentUsername();
+
+        var existingForUsername = userHandlesRepository.findByUsername(currentUsername);
+        if (existingForUsername.isPresent())
+        {
+            String existingHandle = existingForUsername.orElseThrow().getHandle();
+            if (!existingHandle.equals(handle))
+            {
+                return String.format(
+                    "Current user '%s' is already associated with handle '%s'",
+                    currentUsername,
+                    existingHandle);
+            }
+        }
+
+        var existingForHandle = userHandlesRepository.findByHandle(handle);
+        if (existingForHandle.isPresent())
+        {
+            String existingUsername = existingForHandle.orElseThrow().getUsername();
+            if (!existingUsername.equals(currentUsername))
+            {
+                return String.format("Handle '%s' is already associated with another user", handle);
+            }
+        }
+
+        return blogsRepository.existsByNameAndHandle(name, handle)
+            ? String.format("Blog with name '%s' already exists for handle '%s'", name, handle)
+            : null;
     }
     @MemberSupport
     public String default0Create()
@@ -62,15 +104,27 @@ public class Blogs
         }
         return "My Blog 001";
     }
-
     @MemberSupport
     public String default1Create()
     {
+        var existingHandle = currentUserHandle();
+        if (existingHandle != null)
+        {
+            return existingHandle;
+        }
+
         if (!isDevProfileActive())
         {
             return null;
         }
-        return userService.currentUser().orElseThrow().name();
+        return currentUsername();
+    }
+    @MemberSupport
+    public String disable1Create()
+    {
+        return currentUserHandle() != null
+            ? "Handle is already associated with the current user"
+            : null;
     }
 
     @Action(semantics = SemanticsOf.SAFE)
@@ -82,7 +136,7 @@ public class Blogs
     )
     public List<Blog> findByNameContaining(@Name final String name)
     {
-        return blogsRepository.findByNameContaining(name);
+        return blogsRepository.findByNameContainingOrderByNameAsc(name);
     }
 
     @Action(semantics = SemanticsOf.SAFE)
@@ -100,7 +154,29 @@ public class Blogs
     @Action(semantics = SemanticsOf.SAFE, restrictTo = RestrictTo.PROTOTYPING)
     public List<Blog> listAll()
     {
-        return blogsRepository.findAllByHandle(userService.currentUser().orElseThrow().name());
+        var handle = currentUserHandle();
+        return handle != null ? blogsRepository.findAllByHandleOrderByNameAsc(handle) : List.of();
+    }
+
+    @Programmatic
+    public String currentUserHandle()
+    {
+        return userHandlesRepository.findByUsername(currentUsername())
+            .map(UserHandle::getHandle)
+            .orElse(null);
+    }
+
+    private void ensureCurrentUserHandle(final String handle)
+    {
+        if (userHandlesRepository.findByUsername(currentUsername()).isEmpty())
+        {
+            repositoryService.persist(new UserHandle(currentUsername(), handle));
+        }
+    }
+
+    private String currentUsername()
+    {
+        return userService.currentUser().orElseThrow().name();
     }
 
     private boolean isDevProfileActive()

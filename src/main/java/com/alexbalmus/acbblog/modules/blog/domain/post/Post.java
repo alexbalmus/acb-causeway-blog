@@ -4,6 +4,7 @@ import java.awt.image.BufferedImage;
 import java.util.Comparator;
 import java.util.Objects;
 
+import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import jakarta.persistence.AttributeOverride;
 import jakarta.persistence.AttributeOverrides;
@@ -18,13 +19,18 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 import jakarta.persistence.Version;
 
 import lombok.Getter;
 import lombok.Setter;
 
 import org.springframework.data.util.ProxyUtils;
+import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.core.env.Environment;
+import org.springframework.core.env.Profiles;
 
+import org.apache.logging.log4j.util.Strings;
 import org.apache.causeway.applib.annotation.Action;
 import org.apache.causeway.applib.annotation.ActionLayout;
 import org.apache.causeway.applib.annotation.BookmarkPolicy;
@@ -46,6 +52,7 @@ import org.apache.causeway.persistence.jpa.applib.integration.CausewayEntityList
 import org.apache.causeway.persistence.jpa.applib.types.BlobJpaEmbeddable;
 
 import com.alexbalmus.acbblog.modules.blog.common.ImageSupport;
+import com.alexbalmus.acbblog.modules.blog.common.post.picture.PictureDescriptionGenerator;
 import com.alexbalmus.acbblog.modules.blog.domain.blog.Blog;
 import com.alexbalmus.acbblog.modules.blog.types.Content;
 import com.alexbalmus.acbblog.modules.blog.types.Name;
@@ -69,6 +76,8 @@ import com.alexbalmus.acbblog.modules.blog.types.PictureDescription;
 @SuppressWarnings("unused")
 public class Post implements Comparable<Post>
 {
+    private static final String AI_PROFILE = "Ai";
+
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     @Column(nullable = false, name = "id")
@@ -110,6 +119,14 @@ public class Post implements Comparable<Post>
     @Setter
     @Column(length = PictureDescription.MAX_LEN, name = "picture_description")
     private String pictureDescription;
+
+    @Inject
+    @Transient
+    private Environment environment;
+
+    @Inject
+    @Transient
+    private ObjectProvider<PictureDescriptionGenerator> pictureDescriptionGeneratorProvider;
 
 
     protected Post(){}
@@ -213,11 +230,13 @@ public class Post implements Comparable<Post>
         @Picture final BufferedImage picture,
         @PictureDescription final String pictureDescription)
     {
+        Blob pictureBlob = null;
         if (picture != null)
         {
-            setPicture(ImageSupport.toPngBlob(picture, "post-picture.png"));
+            pictureBlob = ImageSupport.toPngBlob(picture, "post-picture.png");
+            setPicture(pictureBlob);
         }
-        setPictureDescription(pictureDescription);
+        setPictureDescription(resolvePictureDescription(pictureBlob, pictureDescription));
         return this;
     }
     @MemberSupport
@@ -247,6 +266,30 @@ public class Post implements Comparable<Post>
     public String disableClearPicture()
     {
         return getPicture() == null && getPictureDescription() == null ? "No picture" : null;
+    }
+
+    private String resolvePictureDescription(final Blob picture, final String description)
+    {
+        if (!Strings.isBlank(description) || picture == null || !isAiProfileActive())
+        {
+            return description;
+        }
+
+        PictureDescriptionGenerator generator = pictureDescriptionGeneratorProvider != null
+            ? pictureDescriptionGeneratorProvider.getIfAvailable()
+            : null;
+
+        if (generator == null)
+        {
+            return description;
+        }
+
+        return generator.generateFor(picture).orElse(description);
+    }
+
+    private boolean isAiProfileActive()
+    {
+        return environment != null && environment.acceptsProfiles(Profiles.of(AI_PROFILE));
     }
 
     @Action(

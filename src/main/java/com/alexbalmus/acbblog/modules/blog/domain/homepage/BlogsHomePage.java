@@ -94,6 +94,11 @@ public class BlogsHomePage
         return blogs.create(name, handle);
     }
     @MemberSupport
+    public String validateCreate(final String name, final String handle)
+    {
+        return blogs.validateCreate(name, handle);
+    }
+    @MemberSupport
     public String default0Create()
     {
         if (!isDevProfileActive())
@@ -105,11 +110,24 @@ public class BlogsHomePage
     @MemberSupport
     public String default1Create()
     {
+        var existingHandle = blogs.currentUserHandle();
+        if (existingHandle != null)
+        {
+            return existingHandle;
+        }
+
         if (!isDevProfileActive())
         {
             return null;
         }
         return userService.currentUser().orElseThrow().name();
+    }
+    @MemberSupport
+    public String disable1Create()
+    {
+        return blogs.currentUserHandle() != null
+            ? "Handle is already associated with the current user"
+            : null;
     }
 
     @Action(semantics = SemanticsOf.NON_IDEMPOTENT_ARE_YOU_SURE)
@@ -122,8 +140,8 @@ public class BlogsHomePage
     )
     public BlogsHomePage deleteBlog(@Name final String name)
     {
-        Optional.ofNullable(blogs.findByNameAndHandle(name,
-            userService.currentUser().orElseThrow().name()))
+        Optional.ofNullable(blogs.currentUserHandle())
+            .map(handle -> blogs.findByNameAndHandle(name, handle))
             .ifPresent(blog -> blog.delete());
         return this;
     }

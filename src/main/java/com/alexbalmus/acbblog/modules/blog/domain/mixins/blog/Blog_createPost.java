@@ -19,6 +19,7 @@ import org.apache.causeway.applib.annotation.PromptStyle;
 import org.apache.causeway.applib.annotation.Publishing;
 import org.apache.causeway.applib.annotation.SemanticsOf;
 import org.apache.causeway.applib.services.repository.RepositoryService;
+import org.apache.causeway.applib.value.Blob;
 
 import com.alexbalmus.acbblog.modules.blog.common.ImageSupport;
 import com.alexbalmus.acbblog.modules.blog.domain.blog.Blog;
@@ -30,6 +31,7 @@ import com.alexbalmus.acbblog.modules.blog.domain.post.Post;
 import com.alexbalmus.acbblog.modules.blog.domain.post.PostsRepository;
 import com.alexbalmus.acbblog.modules.blog.common.post.defaults.PostDefaults;
 import com.alexbalmus.acbblog.modules.blog.common.post.defaults.PostDefaultsGenerator;
+import com.alexbalmus.acbblog.modules.blog.common.post.picture.PictureDescriptionGenerator;
 import com.alexbalmus.acbblog.modules.blog.common.post.safety.PostSafetyChecker;
 import com.alexbalmus.acbblog.modules.blog.common.post.safety.SafetyAssessment;
 
@@ -74,6 +76,7 @@ public class Blog_createPost
     @Inject RepositoryService repositoryService;
     @Inject Environment environment;
     @Inject ObjectProvider<PostDefaultsGenerator> postDefaultsGeneratorProvider;
+    @Inject ObjectProvider<PictureDescriptionGenerator> pictureDescriptionGeneratorProvider;
     @Inject ObjectProvider<PostSafetyChecker> postSafetyCheckerProvider;
 
     public Post act(
@@ -87,12 +90,13 @@ public class Blog_createPost
         {
             throw new IllegalArgumentException(safetyCheckResult);
         }
+        Blob pictureBlob = ImageSupport.toPngBlob(picture, "post-picture.png");
         return repositoryService.persist(new Post(
             blog,
             title,
             content,
-            ImageSupport.toPngBlob(picture, "post-picture.png"),
-            pictureDescription));
+            pictureBlob,
+            resolvePictureDescription(pictureBlob, pictureDescription)));
     }
     public String validate0Act(final String title)
     {
@@ -169,6 +173,22 @@ public class Blog_createPost
 
         resolvedDefaults = generator.generateForJavaBlogPost().orElse(FALLBACK_DEFAULTS);
         return resolvedDefaults;
+    }
+
+    private String resolvePictureDescription(final Blob picture, final String pictureDescription)
+    {
+        if (!Strings.isBlank(pictureDescription) || picture == null || !isAiProfileActive())
+        {
+            return pictureDescription;
+        }
+
+        PictureDescriptionGenerator generator = pictureDescriptionGeneratorProvider.getIfAvailable();
+        if (generator == null)
+        {
+            return pictureDescription;
+        }
+
+        return generator.generateFor(picture).orElse(pictureDescription);
     }
 
     private boolean isDevProfileActive()

@@ -58,7 +58,7 @@ public class Blog_deletePost
     @MemberSupport
     public List<String> choices0Act()
     {
-        return postsRepository.findByBlog(blog)
+        return postsRepository.findByBlogOrderByTitleAsc(blog)
             .stream()
             .map(Post::getTitle)
             .collect(Collectors.toList());
@@ -72,7 +72,7 @@ public class Blog_deletePost
     @MemberSupport
     public String disableAct()
     {
-        return postsRepository.findByBlog(blog).isEmpty() ? "No posts" : null;
+        return postsRepository.findByBlogOrderByTitleAsc(blog).isEmpty() ? "No posts" : null;
     }
 
     // Extension method for Blog:

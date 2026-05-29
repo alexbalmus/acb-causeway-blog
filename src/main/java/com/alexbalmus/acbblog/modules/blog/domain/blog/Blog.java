@@ -40,7 +40,7 @@ import com.alexbalmus.acbblog.modules.blog.types.Handle;
     schema="blog",
     name = "Blog",
     uniqueConstraints = {
-        @UniqueConstraint(name = "Blog__name__UNQ", columnNames = {"name"})
+        @UniqueConstraint(name = "Blog__name__handle__UNQ", columnNames = {"name", "handle"})
     }
 )
 @EntityListeners(CausewayEntityListener.class)

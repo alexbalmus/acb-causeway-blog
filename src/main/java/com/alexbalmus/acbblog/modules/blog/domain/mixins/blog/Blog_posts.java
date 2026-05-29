@@ -33,6 +33,6 @@ public class Blog_posts
 
     public List<Post> coll()
     {
-        return postsRepository.findByBlog(blog);
+        return postsRepository.findByBlogOrderByTitleAsc(blog);
     }
 }
