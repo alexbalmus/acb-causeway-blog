@@ -132,6 +132,38 @@ public class BlogsHomePage
 
     @Action(semantics = SemanticsOf.NON_IDEMPOTENT_ARE_YOU_SURE)
     @ActionLayout(
+        cssClassFa = "fa-solid fa-at",
+        describedAs = "Change your handle and update all your blogs",
+        fieldSetId = LayoutConstants.FieldSetId.IDENTITY,
+        named = "Change Handle",
+        position = ActionLayout.Position.PANEL,
+        promptStyle = PromptStyle.DIALOG_MODAL
+    )
+    public BlogsHomePage changeHandle(@Handle final String handle)
+    {
+        blogs.changeHandle(handle);
+        return this;
+    }
+    @MemberSupport
+    public String validateChangeHandle(final String handle)
+    {
+        return blogs.validateChangeHandle(handle);
+    }
+    @MemberSupport
+    public String default0ChangeHandle()
+    {
+        return blogs.currentUserHandle();
+    }
+    @MemberSupport
+    public String disableChangeHandle()
+    {
+        return blogs.currentUserHandle() == null
+            ? "No handle is associated with the current user"
+            : null;
+    }
+
+    @Action(semantics = SemanticsOf.NON_IDEMPOTENT_ARE_YOU_SURE)
+    @ActionLayout(
         cssClassFa = "fa-solid fa-trash",
         fieldSetId = LayoutConstants.FieldSetId.IDENTITY,
         describedAs = "Deletes this blog and all its posts from the database",

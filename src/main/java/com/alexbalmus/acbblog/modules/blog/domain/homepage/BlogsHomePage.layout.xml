@@ -16,6 +16,7 @@
                     <bs:row>
                         <bs:col span="12">
                             <cpt:fieldSet name="Manage" id="identity" unreferencedProperties="true">
+                                <cpt:action id="changeHandle"/>
                                 <cpt:action id="deleteBlog"/>
                             </cpt:fieldSet>
                         </bs:col>

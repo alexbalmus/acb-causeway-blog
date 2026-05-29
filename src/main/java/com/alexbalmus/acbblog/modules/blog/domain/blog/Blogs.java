@@ -127,6 +127,66 @@ public class Blogs
             : null;
     }
 
+    @Action(semantics = SemanticsOf.NON_IDEMPOTENT_ARE_YOU_SURE)
+    @ActionLayout(
+        cssClassFa = "fa-solid fa-at",
+        describedAs = "Change the current user's handle and update all blogs owned by that handle",
+        named = "Change Handle",
+        promptStyle = PromptStyle.DIALOG_MODAL
+    )
+    public List<Blog> changeHandle(@Handle final String handle)
+    {
+        UserHandle userHandle = userHandlesRepository.findByUsername(currentUsername()).orElseThrow();
+        String previousHandle = userHandle.getHandle();
+
+        List<Blog> userBlogs = blogsRepository.findAllByHandleOrderByNameAsc(previousHandle);
+        userBlogs.forEach(blog -> blog.setHandle(handle));
+        blogsRepository.saveAll(userBlogs);
+
+        userHandle.setHandle(handle);
+        userHandlesRepository.save(userHandle);
+
+        return userBlogs;
+    }
+    @MemberSupport
+    public String validateChangeHandle(final String handle)
+    {
+        String currentHandle = currentUserHandle();
+        if (currentHandle == null)
+        {
+            return "No handle is associated with the current user";
+        }
+
+        if (currentHandle.equals(handle))
+        {
+            return "This is already the current user's handle";
+        }
+
+        var existingForHandle = userHandlesRepository.findByHandle(handle);
+        if (existingForHandle.isPresent())
+        {
+            String existingUsername = existingForHandle.orElseThrow().getUsername();
+            if (!existingUsername.equals(currentUsername()))
+            {
+                return String.format("Handle '%s' is already associated with another user", handle);
+            }
+        }
+
+        return null;
+    }
+    @MemberSupport
+    public String default0ChangeHandle()
+    {
+        return currentUserHandle();
+    }
+    @MemberSupport
+    public String disableChangeHandle()
+    {
+        return currentUserHandle() == null
+            ? "No handle is associated with the current user"
+            : null;
+    }
+
     @Action(semantics = SemanticsOf.SAFE)
     @ActionLayout(
         cssClassFa = "fa-solid fa-magnifying-glass",

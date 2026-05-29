@@ -14,6 +14,7 @@ import jakarta.persistence.UniqueConstraint;
 import jakarta.persistence.Version;
 
 import lombok.Getter;
+import lombok.Setter;
 import org.springframework.data.util.ProxyUtils;
 
 import org.apache.causeway.applib.annotation.DomainObject;
@@ -52,6 +53,7 @@ public class UserHandle
     private String username;
 
     @Getter
+    @Setter
     @Column(length = Handle.MAX_LEN, nullable = false, name = "handle")
     private String handle;
 
