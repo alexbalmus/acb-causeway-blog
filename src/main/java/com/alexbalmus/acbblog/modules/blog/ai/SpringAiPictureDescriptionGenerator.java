@@ -27,10 +27,12 @@ public class SpringAiPictureDescriptionGenerator implements PictureDescriptionGe
         Constraints:
         - one sentence
         - plain text only
+        - no markdown
         - no quotes
         - maximum %d characters
         - describe what is visible, without inventing context that is not evident
-        - IMPORTANT: return only the description
+        - do not include labels such as "Description:" or "Caption:"
+        - IMPORTANT: return only the generated description and nothing else
         """.formatted(PictureDescription.MAX_LEN);
 
     private final ObjectProvider<ChatClient.Builder> chatClientBuilderProvider;
@@ -97,6 +99,8 @@ public class SpringAiPictureDescriptionGenerator implements PictureDescriptionGe
         }
 
         String description = sanitized.replaceAll("\\s+", " ").trim();
+        description = description.replaceFirst("(?i)^(image\\s+description|description|caption)\\s*:\\s*", "");
+        description = description.replaceAll("^\\p{Punct}+|\\p{Punct}+$", "").trim();
         if (description.length() <= PictureDescription.MAX_LEN)
         {
             return description;
