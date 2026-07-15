@@ -81,7 +81,7 @@ public class Blog implements Comparable<Blog>
     }
 
 
-    @Title(prepend = "Blog: ")
+    @Title
     @Name
     @PropertyLayout(
         fieldSetId = LayoutConstants.FieldSetId.IDENTITY,
@@ -115,6 +115,7 @@ public class Blog implements Comparable<Blog>
         return getName();
     }
 
+    @Title(sequence = "2", prepend = " @")
     @Handle
     @PropertyLayout(
         fieldSetId = LayoutConstants.FieldSetId.IDENTITY,

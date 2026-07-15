@@ -28,8 +28,7 @@ causeway:
     common:
       application:
         about: ACB Blog
-        brand-logo-signin: images/apache-causeway/logo-banner-591x120.png
-        brand-logo-header: images/apache-causeway/logo-65x48.png
+        # no brand logos: render the application name as the brand instead
         favicon-url: images/favicon.png
         menubars-layout-file: menubars.layout.xml
         name: ACB Blog
@@ -50,6 +49,7 @@ causeway:
       max-title-length-in-parented-tables: 0
 
       themes:
+        initial: Litera
         show-chooser: true
     graphql:
       api-variant: query_with_mutations_non_spec_compliant

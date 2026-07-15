@@ -52,6 +52,7 @@ import org.apache.causeway.persistence.jpa.applib.integration.CausewayEntityList
 import org.apache.causeway.persistence.jpa.applib.types.BlobJpaEmbeddable;
 
 import com.alexbalmus.acbblog.modules.blog.common.ImageSupport;
+import com.alexbalmus.acbblog.modules.blog.common.MarkupSupport;
 import com.alexbalmus.acbblog.modules.blog.common.post.picture.PictureDescriptionGenerator;
 import com.alexbalmus.acbblog.modules.blog.domain.blog.Blog;
 import com.alexbalmus.acbblog.modules.blog.types.Content;
@@ -151,7 +152,7 @@ public class Post implements Comparable<Post>
     }
 
 
-    @Title(prepend = "Post: ")
+    @Title
     @Name
     @PropertyLayout(
         fieldSetId = LayoutConstants.FieldSetId.IDENTITY,
@@ -178,8 +179,8 @@ public class Post implements Comparable<Post>
 
     @Property(optionality = Optionality.OPTIONAL)
     @PropertyLayout(
-        fieldSetId = "media",
-        fieldSetName = "Picture",
+        fieldSetId = "article",
+        fieldSetName = "Article",
         hidden = Where.ALL_TABLES,
         named = "Picture",
         sequence = "1",
@@ -187,7 +188,31 @@ public class Post implements Comparable<Post>
     )
     public Markup getPicturePreview()
     {
-        return ImageSupport.imagePreview(getPicture());
+        return ImageSupport.imagePreview(getPicture(), getPictureDescription());
+    }
+    @MemberSupport
+    public boolean hidePicturePreview()
+    {
+        return getPicture() == null;
+    }
+
+    @Property(optionality = Optionality.OPTIONAL)
+    @PropertyLayout(
+        fieldSetId = "article",
+        fieldSetName = "Article",
+        hidden = Where.ALL_TABLES,
+        named = "Content",
+        sequence = "2",
+        describedAs = "The post content as readers see it"
+    )
+    public Markup getContentPreview()
+    {
+        return MarkupSupport.toHtmlParagraphs(getContent());
+    }
+    @MemberSupport
+    public boolean hideContentPreview()
+    {
+        return Strings.isBlank(getContent());
     }
 
     @Picture

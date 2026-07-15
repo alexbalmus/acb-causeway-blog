@@ -10,6 +10,17 @@
         </bs:col>
     </bs:row>
     <bs:row>
+        <bs:col span="8">
+            <bs:tabGroup unreferencedCollections="true">
+                <bs:tab name="Blogs">
+                    <bs:row>
+                        <bs:col span="12">
+                            <cpt:collection id="blogs"/>
+                        </bs:col>
+                    </bs:row>
+                </bs:tab>
+            </bs:tabGroup>
+        </bs:col>
         <bs:col span="4">
             <bs:tabGroup collapseIfOne="true">
                 <bs:tab name="Manage">
@@ -19,17 +30,6 @@
                                 <cpt:action id="changeHandle"/>
                                 <cpt:action id="deleteBlog"/>
                             </cpt:fieldSet>
-                        </bs:col>
-                    </bs:row>
-                </bs:tab>
-            </bs:tabGroup>
-        </bs:col>
-        <bs:col span="8">
-            <bs:tabGroup unreferencedCollections="true">
-                <bs:tab name="Blogs">
-                    <bs:row>
-                        <bs:col span="12">
-                            <cpt:collection id="blogs"/>
                         </bs:col>
                     </bs:row>
                 </bs:tab>

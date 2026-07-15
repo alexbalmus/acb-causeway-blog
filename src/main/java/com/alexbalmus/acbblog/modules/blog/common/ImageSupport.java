@@ -37,6 +37,11 @@ public final class ImageSupport
 
     public static Markup imagePreview(final Blob blob)
     {
+        return imagePreview(blob, null);
+    }
+
+    public static Markup imagePreview(final Blob blob, final String altText)
+    {
         if (blob == null)
         {
             return Markup.valueOf("");
@@ -48,11 +53,16 @@ public final class ImageSupport
             return Markup.valueOf("");
         }
 
+        String alt = altText == null || altText.isBlank()
+            ? "Post picture"
+            : MarkupSupport.escape(altText);
+
         String encoded = Base64.getEncoder().encodeToString(blob.bytes());
         return Markup.valueOf(String.format(
-            "<img alt=\"Post picture\" src=\"data:%s;base64,%s\" " +
+            "<img alt=\"%s\" src=\"data:%s;base64,%s\" " +
                 "style=\"display:block;width:100%%;max-width:%dpx;max-height:%dpx;" +
                 "height:auto;object-fit:contain;margin:0 auto;\"/>",
+            alt,
             mimeType,
             encoded,
             PREVIEW_MAX_WIDTH,

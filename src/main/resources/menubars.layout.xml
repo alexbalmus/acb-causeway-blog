@@ -14,6 +14,9 @@
                 <mb3:serviceAction objectType="blog.Blogs" id="findByNameContaining">
                     <cpt:named>Find Blogs</cpt:named>
                 </mb3:serviceAction>
+                <mb3:serviceAction objectType="blog.Blogs" id="findByNameAndHandle">
+                    <cpt:named>Find Blog</cpt:named>
+                </mb3:serviceAction>
                 <mb3:serviceAction objectType="blog.Blogs" id="listAll">
                     <cpt:named>My Blogs</cpt:named>
                 </mb3:serviceAction>

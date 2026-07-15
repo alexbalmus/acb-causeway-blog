@@ -1,3 +1,19 @@
 body > nav > div > a > img {
     height: 32px;
 }
+
+/* article-style rendering of post content (see Post#getContentPreview) */
+.acb-post-content {
+    font-size: 1.1rem;
+    line-height: 1.75;
+    max-width: 46rem;
+    margin: 0 auto;
+}
+
+.acb-post-content p {
+    margin: 0 0 1rem;
+}
+
+.acb-post-content p:last-child {
+    margin-bottom: 0;
+}

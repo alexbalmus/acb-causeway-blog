@@ -12,29 +12,29 @@
         </bs:col>
     </bs:row>
     <bs:row>
-        <bs:col span="4">
-            <bs:tabGroup collapseIfOne="true">
-                <bs:tab name="Blog">
-                    <bs:row>
-                        <bs:col span="12">
-                            <cpt:fieldSet name="Blog" id="identity" unreferencedProperties="true">
-                                <cpt:action id="delete"/>
-                                <cpt:property id="name">
-                                    <cpt:action id="updateName"/>
-                                </cpt:property>
-                                <cpt:property id="handle"/>
-                            </cpt:fieldSet>
-                        </bs:col>
-                    </bs:row>
-                </bs:tab>
-            </bs:tabGroup>
-        </bs:col>
         <bs:col span="8">
             <bs:tabGroup unreferencedCollections="true">
                 <bs:tab name="Posts">
                     <bs:row>
                         <bs:col span="12">
                             <cpt:collection id="posts"/>
+                        </bs:col>
+                    </bs:row>
+                </bs:tab>
+            </bs:tabGroup>
+        </bs:col>
+        <bs:col span="4">
+            <bs:tabGroup collapseIfOne="true">
+                <bs:tab name="Blog">
+                    <bs:row>
+                        <bs:col span="12">
+                            <cpt:fieldSet name="About this blog" id="identity" unreferencedProperties="true">
+                                <cpt:action id="delete"/>
+                                <cpt:property id="name">
+                                    <cpt:action id="updateName"/>
+                                </cpt:property>
+                                <cpt:property id="handle"/>
+                            </cpt:fieldSet>
                         </bs:col>
                     </bs:row>
                 </bs:tab>
