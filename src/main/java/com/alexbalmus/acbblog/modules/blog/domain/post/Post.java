@@ -20,6 +20,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
+import jakarta.persistence.UniqueConstraint;
 import jakarta.persistence.Version;
 
 import lombok.Getter;
@@ -56,6 +57,7 @@ import com.alexbalmus.acbblog.modules.blog.common.MarkupSupport;
 import com.alexbalmus.acbblog.modules.blog.common.post.picture.PictureDescriptionGenerator;
 import com.alexbalmus.acbblog.modules.blog.common.post.safety.PostSafetyGuard;
 import com.alexbalmus.acbblog.modules.blog.domain.blog.Blog;
+import com.alexbalmus.acbblog.modules.blog.domain.blog.BlogOwnershipGuard;
 import com.alexbalmus.acbblog.modules.blog.types.Content;
 import com.alexbalmus.acbblog.modules.blog.types.Name;
 import com.alexbalmus.acbblog.modules.blog.types.Picture;
@@ -65,7 +67,10 @@ import com.alexbalmus.acbblog.modules.blog.types.PictureDescription;
 @Entity
 @Table(
     schema="blog",
-    name = "Post"
+    name = "Post",
+    uniqueConstraints = {
+        @UniqueConstraint(name = "Post__blog_id__title__UNQ", columnNames = {"blog_id", "title"})
+    }
 )
 @EntityListeners(CausewayEntityListener.class)
 @Named("blog.Post")
@@ -134,6 +139,14 @@ public class Post implements Comparable<Post>
     @Transient
     private PostSafetyGuard postSafetyGuard;
 
+    @Inject
+    @Transient
+    private BlogOwnershipGuard blogOwnershipGuard;
+
+    @Inject
+    @Transient
+    private PostsRepository postsRepository;
+
 
     protected Post(){}
 
@@ -185,6 +198,11 @@ public class Post implements Comparable<Post>
     public String validateContent(final String content)
     {
         return checkSafety(getTitle(), content);
+    }
+    @MemberSupport
+    public String disableContent()
+    {
+        return vetoUnlessOwnedByCurrentUser();
     }
 
     @Property(optionality = Optionality.OPTIONAL)
@@ -248,6 +266,11 @@ public class Post implements Comparable<Post>
     {
         return pictureDescription;
     }
+    @MemberSupport
+    public String disablePictureDescription()
+    {
+        return vetoUnlessOwnedByCurrentUser();
+    }
 
     @Action(
         semantics = SemanticsOf.IDEMPOTENT,
@@ -279,6 +302,11 @@ public class Post implements Comparable<Post>
     {
         return getPictureDescription();
     }
+    @MemberSupport
+    public String disableUpdatePicture()
+    {
+        return vetoUnlessOwnedByCurrentUser();
+    }
 
     @Action(
         semantics = SemanticsOf.IDEMPOTENT,
@@ -300,6 +328,11 @@ public class Post implements Comparable<Post>
     @MemberSupport
     public String disableClearPicture()
     {
+        String veto = vetoUnlessOwnedByCurrentUser();
+        if (veto != null)
+        {
+            return veto;
+        }
         return getPicture() == null && getPictureDescription() == null ? "No picture" : null;
     }
 
@@ -345,6 +378,10 @@ public class Post implements Comparable<Post>
     @MemberSupport
     public String validate0UpdateTitle(final String name)
     {
+        if (isTitleTakenByAnotherPost(name))
+        {
+            return String.format("Post with title '%s' already defined for this blog", name);
+        }
         return checkSafety(name, getContent());
     }
     @MemberSupport
@@ -352,10 +389,28 @@ public class Post implements Comparable<Post>
     {
         return getTitle();
     }
+    @MemberSupport
+    public String disableUpdateTitle()
+    {
+        return vetoUnlessOwnedByCurrentUser();
+    }
+
+    private boolean isTitleTakenByAnotherPost(final String title)
+    {
+        return postsRepository != null
+            && postsRepository.findByBlogAndTitle(getBlog(), title)
+                .filter(existing -> !existing.equals(this))
+                .isPresent();
+    }
 
     private String checkSafety(final String title, final String content)
     {
         return postSafetyGuard != null ? postSafetyGuard.check(title, content) : null;
+    }
+
+    private String vetoUnlessOwnedByCurrentUser()
+    {
+        return blogOwnershipGuard != null ? blogOwnershipGuard.vetoUnlessOwnedByCurrentUser(getBlog()) : null;
     }
 
     @Override

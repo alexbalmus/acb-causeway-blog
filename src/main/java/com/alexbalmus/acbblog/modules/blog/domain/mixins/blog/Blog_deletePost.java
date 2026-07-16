@@ -18,6 +18,7 @@ import org.apache.causeway.applib.services.repository.RepositoryService;
 import com.alexbalmus.acbblog.modules.blog.common.ApplicationContextHelper;
 import com.alexbalmus.acbblog.modules.blog.types.Name;
 import com.alexbalmus.acbblog.modules.blog.domain.blog.Blog;
+import com.alexbalmus.acbblog.modules.blog.domain.blog.BlogOwnershipGuard;
 import com.alexbalmus.acbblog.modules.blog.domain.post.Post;
 import com.alexbalmus.acbblog.modules.blog.domain.post.PostsRepository;
 
@@ -43,6 +44,7 @@ public class Blog_deletePost
     @Inject PostsRepository postsRepository;
     @Inject RepositoryService repositoryService;
     @Inject MessageService messageService;
+    @Inject BlogOwnershipGuard blogOwnershipGuard;
 
     public Blog act(@Name final String title)
     {
@@ -72,6 +74,11 @@ public class Blog_deletePost
     @MemberSupport
     public String disableAct()
     {
+        String veto = blogOwnershipGuard.vetoUnlessOwnedByCurrentUser(blog);
+        if (veto != null)
+        {
+            return veto;
+        }
         return postsRepository.findByBlogOrderByTitleAsc(blog).isEmpty() ? "No posts" : null;
     }
 

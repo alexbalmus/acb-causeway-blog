@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 
 import org.apache.causeway.applib.annotation.Action;
 import org.apache.causeway.applib.annotation.ActionLayout;
+import org.apache.causeway.applib.annotation.MemberSupport;
 import org.apache.causeway.applib.annotation.SemanticsOf;
 import org.apache.causeway.applib.layout.LayoutConstants;
 import org.apache.causeway.applib.services.message.MessageService;
@@ -14,6 +15,7 @@ import org.apache.causeway.applib.services.title.TitleService;
 
 import com.alexbalmus.acbblog.modules.blog.domain.post.Post;
 import com.alexbalmus.acbblog.modules.blog.domain.blog.Blog;
+import com.alexbalmus.acbblog.modules.blog.domain.blog.BlogOwnershipGuard;
 
 
 @Action(
@@ -35,6 +37,7 @@ public class Post_delete
     @Inject TitleService titleService;
     @Inject MessageService messageService;
     @Inject RepositoryService repositoryService;
+    @Inject BlogOwnershipGuard blogOwnershipGuard;
 
     public Blog act()
     {
@@ -43,5 +46,10 @@ public class Post_delete
         var blogReference = post.getBlog();
         repositoryService.removeAndFlush(post);
         return blogReference;
+    }
+    @MemberSupport
+    public String disableAct()
+    {
+        return blogOwnershipGuard.vetoUnlessOwnedByCurrentUser(post.getBlog());
     }
 }

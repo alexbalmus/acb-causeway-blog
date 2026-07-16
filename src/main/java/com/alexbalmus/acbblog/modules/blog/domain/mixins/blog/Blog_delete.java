@@ -15,6 +15,7 @@ import org.apache.causeway.applib.services.title.TitleService;
 import com.alexbalmus.acbblog.modules.blog.common.ApplicationContextHelper;
 import com.alexbalmus.acbblog.modules.blog.domain.post.PostsRepository;
 import com.alexbalmus.acbblog.modules.blog.domain.blog.Blog;
+import com.alexbalmus.acbblog.modules.blog.domain.blog.BlogOwnershipGuard;
 import com.alexbalmus.acbblog.modules.blog.domain.homepage.BlogsHomePage;
 
 
@@ -40,6 +41,7 @@ public class Blog_delete
     @Inject RepositoryService repositoryService;
     @Inject PostsRepository postsRepository;
     @Inject FactoryService factoryService;
+    @Inject BlogOwnershipGuard blogOwnershipGuard;
 
     public BlogsHomePage act()
     {
@@ -49,6 +51,11 @@ public class Blog_delete
         messageService.informUser(String.format("'%s' and its posts have been deleted", title));
         repositoryService.removeAndFlush(blog);
         return factoryService.viewModel(BlogsHomePage.class);
+    }
+    @MemberSupport
+    public String disableAct()
+    {
+        return blogOwnershipGuard.vetoUnlessOwnedByCurrentUser(blog);
     }
 
     private Blog deletePosts()

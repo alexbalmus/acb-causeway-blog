@@ -3,6 +3,7 @@ package com.alexbalmus.acbblog.modules.blog.domain.blog;
 import java.util.Comparator;
 import java.util.Objects;
 
+import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -11,6 +12,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 import jakarta.persistence.UniqueConstraint;
 import jakarta.persistence.Version;
 
@@ -71,6 +73,10 @@ public class Blog implements Comparable<Blog>
     @Column(length = Handle.MAX_LEN, nullable = false, name = "handle")
     private String handle;
 
+    @Inject
+    @Transient
+    private BlogOwnershipGuard blogOwnershipGuard;
+
 
     protected Blog() {}
 
@@ -113,6 +119,11 @@ public class Blog implements Comparable<Blog>
     public String default0UpdateName()
     {
         return getName();
+    }
+    @MemberSupport
+    public String disableUpdateName()
+    {
+        return blogOwnershipGuard != null ? blogOwnershipGuard.vetoUnlessOwnedByCurrentUser(this) : null;
     }
 
     @Title(sequence = "2", prepend = " @")

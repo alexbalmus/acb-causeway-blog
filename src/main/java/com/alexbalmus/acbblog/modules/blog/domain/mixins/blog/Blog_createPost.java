@@ -23,6 +23,7 @@ import org.apache.causeway.applib.value.Blob;
 
 import com.alexbalmus.acbblog.modules.blog.common.ImageSupport;
 import com.alexbalmus.acbblog.modules.blog.domain.blog.Blog;
+import com.alexbalmus.acbblog.modules.blog.domain.blog.BlogOwnershipGuard;
 import com.alexbalmus.acbblog.modules.blog.types.Content;
 import com.alexbalmus.acbblog.modules.blog.types.Name;
 import com.alexbalmus.acbblog.modules.blog.types.Picture;
@@ -74,6 +75,7 @@ public class Blog_createPost
     @Inject ObjectProvider<PostDefaultsGenerator> postDefaultsGeneratorProvider;
     @Inject ObjectProvider<PictureDescriptionGenerator> pictureDescriptionGeneratorProvider;
     @Inject PostSafetyGuard postSafetyGuard;
+    @Inject BlogOwnershipGuard blogOwnershipGuard;
 
     public Post act(
         @Name final String title,
@@ -99,6 +101,11 @@ public class Blog_createPost
         return postsRepository.findByBlogAndTitle(blog, title).isPresent()
             ? String.format("Post with title '%s' already defined for this blog", title)
             : null;
+    }
+    @MemberSupport
+    public String disableAct()
+    {
+        return blogOwnershipGuard.vetoUnlessOwnedByCurrentUser(blog);
     }
     @MemberSupport
     public String default0Act()
