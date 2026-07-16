@@ -54,6 +54,7 @@ import org.apache.causeway.persistence.jpa.applib.types.BlobJpaEmbeddable;
 import com.alexbalmus.acbblog.modules.blog.common.ImageSupport;
 import com.alexbalmus.acbblog.modules.blog.common.MarkupSupport;
 import com.alexbalmus.acbblog.modules.blog.common.post.picture.PictureDescriptionGenerator;
+import com.alexbalmus.acbblog.modules.blog.common.post.safety.PostSafetyGuard;
 import com.alexbalmus.acbblog.modules.blog.domain.blog.Blog;
 import com.alexbalmus.acbblog.modules.blog.types.Content;
 import com.alexbalmus.acbblog.modules.blog.types.Name;
@@ -129,6 +130,10 @@ public class Post implements Comparable<Post>
     @Transient
     private ObjectProvider<PictureDescriptionGenerator> pictureDescriptionGeneratorProvider;
 
+    @Inject
+    @Transient
+    private PostSafetyGuard postSafetyGuard;
+
 
     protected Post(){}
 
@@ -175,6 +180,11 @@ public class Post implements Comparable<Post>
     public String getContent()
     {
         return content;
+    }
+    @MemberSupport
+    public String validateContent(final String content)
+    {
+        return checkSafety(getTitle(), content);
     }
 
     @Property(optionality = Optionality.OPTIONAL)
@@ -333,9 +343,19 @@ public class Post implements Comparable<Post>
         return this;
     }
     @MemberSupport
+    public String validate0UpdateTitle(final String name)
+    {
+        return checkSafety(name, getContent());
+    }
+    @MemberSupport
     public String default0UpdateTitle()
     {
         return getTitle();
+    }
+
+    private String checkSafety(final String title, final String content)
+    {
+        return postSafetyGuard != null ? postSafetyGuard.check(title, content) : null;
     }
 
     @Override

@@ -16,7 +16,8 @@ public class TextSanitizer
             return "";
         }
 
-        String regex = "[\\p{C}]"; // control characters
+        // control characters, except line breaks and tabs (paragraph structure must survive)
+        String regex = "[\\p{C}&&[^\\r\\n\\t]]";
 
         Pattern pattern = Pattern.compile(regex);
         Matcher matcher = pattern.matcher(text.trim());

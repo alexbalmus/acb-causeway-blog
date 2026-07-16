@@ -32,8 +32,7 @@ import com.alexbalmus.acbblog.modules.blog.domain.post.PostsRepository;
 import com.alexbalmus.acbblog.modules.blog.common.post.defaults.PostDefaults;
 import com.alexbalmus.acbblog.modules.blog.common.post.defaults.PostDefaultsGenerator;
 import com.alexbalmus.acbblog.modules.blog.common.post.picture.PictureDescriptionGenerator;
-import com.alexbalmus.acbblog.modules.blog.common.post.safety.PostSafetyChecker;
-import com.alexbalmus.acbblog.modules.blog.common.post.safety.SafetyAssessment;
+import com.alexbalmus.acbblog.modules.blog.common.post.safety.PostSafetyGuard;
 
 
 @Action(
@@ -64,9 +63,6 @@ public class Blog_createPost
     );
     public static final String DEV_PROFILE = "Dev";
     public static final String AI_PROFILE = "Ai";
-    public static final String AI_FEATURES_ARE_ACTIVE_BUT_NO_SAFETY_CHECKER_IS_AVAILABLE = "Ai features are active but no safety checker is available.";
-    public static final String CONTENT_IS_NOT_APPROPRIATE_FOR_A_GENERAL_AUDIENCE = "Post content is not appropriate for a general audience.";
-    public static final String CONTENT_IS_NOT_APPROPRIATE_FOR_A_GENERAL_AUDIENCE_WITH_REASON = "Post content is not appropriate for a general audience: ";
 
     private final Blog blog;
     private PostDefaults resolvedDefaults;
@@ -77,7 +73,7 @@ public class Blog_createPost
     @Inject Environment environment;
     @Inject ObjectProvider<PostDefaultsGenerator> postDefaultsGeneratorProvider;
     @Inject ObjectProvider<PictureDescriptionGenerator> pictureDescriptionGeneratorProvider;
-    @Inject ObjectProvider<PostSafetyChecker> postSafetyCheckerProvider;
+    @Inject PostSafetyGuard postSafetyGuard;
 
     public Post act(
         @Name final String title,
@@ -85,7 +81,7 @@ public class Blog_createPost
         @Picture final BufferedImage picture,
         @PictureDescription final String pictureDescription)
     {
-        String safetyCheckResult = performSafetyCheck(title, content);
+        String safetyCheckResult = postSafetyGuard.check(title, content);
         if (safetyCheckResult != null)
         {
             throw new IllegalArgumentException(safetyCheckResult);
@@ -115,34 +111,6 @@ public class Blog_createPost
     {
         PostDefaults defaults = resolveDefaults();
         return defaults != null ? defaults.content() : null;
-    }
-
-    private String performSafetyCheck(final String title, final String content)
-    {
-        if (!isAiProfileActive())
-        {
-            return null;
-        }
-
-        PostSafetyChecker checker = postSafetyCheckerProvider.getIfAvailable();
-
-        if (checker == null)
-        {
-            return AI_FEATURES_ARE_ACTIVE_BUT_NO_SAFETY_CHECKER_IS_AVAILABLE;
-        }
-
-        SafetyAssessment assessment = checker.assess(title, content);
-
-        if (assessment.safe())
-        {
-            return null;
-        }
-
-        String reason = assessment.reason();
-
-        return Strings.isBlank(reason)
-            ? CONTENT_IS_NOT_APPROPRIATE_FOR_A_GENERAL_AUDIENCE
-            : CONTENT_IS_NOT_APPROPRIATE_FOR_A_GENERAL_AUDIENCE_WITH_REASON + reason;
     }
 
     private PostDefaults resolveDefaults()

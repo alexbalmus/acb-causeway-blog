@@ -25,7 +25,6 @@ import org.apache.causeway.applib.annotation.PromptStyle;
 import org.apache.causeway.applib.annotation.SemanticsOf;
 import org.apache.causeway.applib.annotation.TableDecorator;
 import org.apache.causeway.applib.layout.LayoutConstants;
-import org.apache.causeway.applib.services.factory.FactoryService;
 import org.apache.causeway.applib.services.user.UserService;
 
 import com.alexbalmus.acbblog.modules.blog.domain.blog.Blog;
@@ -48,19 +47,8 @@ public class BlogsHomePage
 {
     private static final String DEV_PROFILE = "Dev";
 
-    private static BlogsHomePage instance;
-    public static BlogsHomePage instance()
-    {
-        return instance;
-    }
-
-    {
-        instance = this;
-    }
-
     @Inject Blogs blogs;
     @Inject UserService userService;
-    @Inject FactoryService factoryService;
     @Inject Environment environment;
 
     @ObjectSupport

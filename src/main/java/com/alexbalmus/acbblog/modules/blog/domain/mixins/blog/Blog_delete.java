@@ -48,7 +48,7 @@ public class Blog_delete
         final String title = titleService.titleOf(blog);
         messageService.informUser(String.format("'%s' and its posts have been deleted", title));
         repositoryService.removeAndFlush(blog);
-        return BlogsHomePage.instance();
+        return factoryService.viewModel(BlogsHomePage.class);
     }
 
     private Blog deletePosts()
