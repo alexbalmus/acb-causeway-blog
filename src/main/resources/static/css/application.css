@@ -2,6 +2,15 @@ body > nav > div > a > img {
     height: 32px;
 }
 
+/* caption rendered under the post picture (see ImageSupport#imagePreview) */
+.acb-post-caption {
+    margin-top: 0.5rem;
+    text-align: center;
+    font-size: 0.9rem;
+    font-style: italic;
+    color: var(--bs-secondary-color, #6c757d);
+}
+
 /* article-style rendering of post content (see Post#getContentPreview) */
 .acb-post-content {
     font-size: 1.1rem;

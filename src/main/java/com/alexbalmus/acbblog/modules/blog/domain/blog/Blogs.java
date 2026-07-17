@@ -123,7 +123,7 @@ public class Blogs
     public String disable1Create()
     {
         return currentUserHandle() != null
-            ? "Handle is already associated with the current user"
+            ? "Handle is already associated with the current user; choose menu option 'Other -> Change Handle' to change it"
             : null;
     }
 

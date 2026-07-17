@@ -53,12 +53,11 @@ public final class ImageSupport
             return Markup.valueOf("");
         }
 
-        String alt = altText == null || altText.isBlank()
-            ? "Post picture"
-            : MarkupSupport.escape(altText);
+        boolean hasDescription = altText != null && !altText.isBlank();
+        String alt = hasDescription ? MarkupSupport.escape(altText) : "Post picture";
 
         String encoded = Base64.getEncoder().encodeToString(blob.bytes());
-        return Markup.valueOf(String.format(
+        String image = String.format(
             "<img alt=\"%s\" src=\"data:%s;base64,%s\" " +
                 "style=\"display:block;width:100%%;max-width:%dpx;max-height:%dpx;" +
                 "height:auto;object-fit:contain;margin:0 auto;\"/>",
@@ -66,7 +65,14 @@ public final class ImageSupport
             mimeType,
             encoded,
             PREVIEW_MAX_WIDTH,
-            PREVIEW_MAX_HEIGHT));
+            PREVIEW_MAX_HEIGHT);
+
+        String caption = hasDescription
+            ? "<figcaption class=\"acb-post-caption\">" + alt + "</figcaption>"
+            : "";
+
+        return Markup.valueOf(
+            "<figure class=\"acb-post-figure\" style=\"margin:0;\">" + image + caption + "</figure>");
     }
 
 }
