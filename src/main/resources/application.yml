@@ -77,6 +77,12 @@ resteasy:
     defaultPath: "/restful"
 
 server:
+  # Bind to loopback only so the app is reachable just from this machine.
+  # This POC has prototyping mode (H2 console), a GraphQL superuser fallback and
+  # shared demo passwords enabled, none of which should be exposed on a network.
+  # For a genuine multi-host deployment, override this (e.g. server.address=0.0.0.0)
+  # only once those are secured.
+  address: 127.0.0.1
   max-http-header-size: 16KB
 
 spring:
