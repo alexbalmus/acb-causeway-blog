@@ -1,0 +1,137 @@
+<nav class="breadcrumbs">
+  <a routerLink="/">&#127968; Home</a>
+  <span>/</span>
+  <span>{{ blog()?.title ?? '…' }}</span>
+</nav>
+
+@if (loading()) {
+  <p class="muted">Loading…</p>
+} @else if (blog(); as b) {
+  <header class="page-head">
+    <div>
+      <h1>&#128225; {{ b.name }}</h1>
+      <p class="muted">&#64;{{ b.handle }}</p>
+    </div>
+    <div class="actions">
+      <button
+        (click)="openPanel('rename')"
+        [disabled]="disabledReason('updateName') !== null"
+        [title]="disabledReason('updateName') ?? 'Renames this blog'"
+      >
+        &#9998; Rename
+      </button>
+      <button
+        class="primary"
+        (click)="openPanel('newPost')"
+        [disabled]="disabledReason('createPost') !== null"
+        [title]="disabledReason('createPost') ?? 'Create a post in this blog'"
+      >
+        + New Post
+      </button>
+      <button
+        class="danger"
+        (click)="deleteBlog()"
+        [disabled]="busy() || disabledReason('delete') !== null"
+        [title]="disabledReason('delete') ?? 'Deletes this blog and all its posts'"
+      >
+        &#128465; Delete Blog
+      </button>
+    </div>
+  </header>
+
+  @if (panel() === 'rename') {
+    <form class="panel" (ngSubmit)="rename()">
+      <h2>Rename Blog</h2>
+      <label>
+        Name
+        <input name="renameValue" [(ngModel)]="renameValue" maxlength="50" required autofocus />
+        @if (fieldErrors()['name']; as err) {
+          <span class="field-error">{{ err }}</span>
+        }
+      </label>
+      <div class="panel-buttons">
+        <button class="primary" type="submit" [disabled]="busy() || !renameValue">Rename</button>
+        <button type="button" (click)="panel.set('none')">Cancel</button>
+      </div>
+    </form>
+  }
+
+  @if (panel() === 'newPost') {
+    <form class="panel" (ngSubmit)="createPost()">
+      <h2>New Post</h2>
+      <label>
+        Title
+        <input name="postTitle" [(ngModel)]="postTitle" maxlength="50" required autofocus />
+        @if (fieldErrors()['title']; as err) {
+          <span class="field-error">{{ err }}</span>
+        }
+      </label>
+      <label>
+        Content
+        <textarea name="postContent" [(ngModel)]="postContent" rows="10" maxlength="4000">
+        </textarea>
+        @if (fieldErrors()['content']; as err) {
+          <span class="field-error">{{ err }}</span>
+        }
+      </label>
+      <label>
+        Picture (optional)
+        <input name="postPicture" type="file" accept="image/*" (change)="onPictureSelected($event)" />
+        @if (fieldErrors()['picture']; as err) {
+          <span class="field-error">{{ err }}</span>
+        }
+      </label>
+      <label>
+        Picture description (optional)
+        <textarea
+          name="postPictureDescription"
+          [(ngModel)]="postPictureDescription"
+          rows="3"
+          maxlength="500"
+        ></textarea>
+        @if (fieldErrors()['pictureDescription']; as err) {
+          <span class="field-error">{{ err }}</span>
+        }
+      </label>
+      <div class="panel-buttons">
+        <button class="primary" type="submit" [disabled]="busy() || !postTitle">
+          {{ busy() ? 'Creating…' : 'Create Post' }}
+        </button>
+        <button type="button" (click)="panel.set('none')">Cancel</button>
+      </div>
+    </form>
+  }
+
+  <section class="card">
+    <h2>Posts</h2>
+    @if (posts().length === 0) {
+      <p class="muted">No posts yet.</p>
+    } @else {
+      <table>
+        <thead>
+          <tr><th>Title</th><th></th></tr>
+        </thead>
+        <tbody>
+          @for (post of posts(); track post.instanceId) {
+            <tr>
+              <td>
+                <a class="strong" [routerLink]="['/posts', post.instanceId]">{{ post.title }}</a>
+              </td>
+              <td class="row-actions">
+                <a [routerLink]="['/posts', post.instanceId]">Open</a>
+                <button
+                  class="link danger"
+                  [disabled]="busy() || disabledReason('deletePost') !== null"
+                  [title]="disabledReason('deletePost') ?? ''"
+                  (click)="deletePost(post)"
+                >
+                  Delete
+                </button>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    }
+  </section>
+}

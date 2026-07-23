@@ -19,7 +19,7 @@ import org.apache.causeway.applib.annotation.MemberSupport;
 import org.apache.causeway.applib.annotation.PriorityPrecedence;
 import org.apache.causeway.applib.annotation.Programmatic;
 import org.apache.causeway.applib.annotation.PromptStyle;
-import org.apache.causeway.applib.annotation.RestrictTo;
+//import org.apache.causeway.applib.annotation.RestrictTo;
 import org.apache.causeway.applib.annotation.SemanticsOf;
 import org.apache.causeway.applib.services.repository.RepositoryService;
 import org.apache.causeway.applib.services.user.UserService;
@@ -211,7 +211,15 @@ public class Blogs
         return blogsRepository.findByNameAndHandle(name, handle);
     }
 
-    @Action(semantics = SemanticsOf.SAFE, restrictTo = RestrictTo.PROTOTYPING)
+    // Deliberately not RestrictTo.PROTOTYPING: this only returns the current
+    // user's own blogs, and the REST home page (webclient/) relies on it in
+    // production mode too.
+    @Action(semantics = SemanticsOf.SAFE) // , restrictTo = RestrictTo.PROTOTYPING)
+    @ActionLayout(
+        cssClassFa = "fa-solid fa-list",
+        describedAs = "List the current user's blogs",
+        named = "My Blogs"
+    )
     public List<Blog> listAll()
     {
         var handle = currentUserHandle();

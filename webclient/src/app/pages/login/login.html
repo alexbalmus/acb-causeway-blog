@@ -1,0 +1,36 @@
+<div class="login-wrap">
+  <form class="login-card" (ngSubmit)="submit()">
+    <h1><span class="brand-icon">&#9993;</span> ACB Blog</h1>
+    <p class="subtitle">Sign in to manage your blogs</p>
+
+    <label>
+      Username
+      <input
+        name="username"
+        [(ngModel)]="username"
+        autocomplete="username"
+        required
+        autofocus
+      />
+    </label>
+
+    <label>
+      Password
+      <input
+        name="password"
+        type="password"
+        [(ngModel)]="password"
+        autocomplete="current-password"
+        required
+      />
+    </label>
+
+    @if (error(); as message) {
+      <p class="error">{{ message }}</p>
+    }
+
+    <button type="submit" [disabled]="busy() || !username || !password">
+      {{ busy() ? 'Signing in…' : 'Sign in' }}
+    </button>
+  </form>
+</div>

@@ -1,0 +1,22 @@
+<header class="app-header">
+  <a class="brand" routerLink="/">&#9993; ACB Blog</a>
+  @if (auth.userName(); as user) {
+    <div class="user-area">
+      <span class="user-name">&#128100; {{ user }}</span>
+      <button class="link" (click)="logout()">Sign out</button>
+    </div>
+  }
+</header>
+
+<main class="app-main">
+  <router-outlet />
+</main>
+
+<div class="toasts" aria-live="polite">
+  @for (toast of messages.toasts(); track toast.id) {
+    <div class="toast" [class.toast-error]="toast.kind === 'error'">
+      <span>{{ toast.text }}</span>
+      <button class="link" (click)="messages.dismiss(toast.id)">&#10005;</button>
+    </div>
+  }
+</div>
