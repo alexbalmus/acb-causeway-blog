@@ -97,7 +97,10 @@ export class BlogApiService {
 
   async renameBlog(instanceId: string, name: string): Promise<BlogView> {
     const href = this.ro.objectHref(BLOG_TYPE, instanceId);
-    return this.toBlogView(await this.ro.invokeIdempotent(href, 'updateName', { name }));
+    await this.ro.invokeIdempotent(href, 'updateName', { name });
+    // An action-result representation omits the object's property members, so
+    // re-fetch the object to get a fully-populated view for the caller.
+    return this.getBlog(instanceId);
   }
 
   async createPost(
@@ -134,7 +137,9 @@ export class BlogApiService {
 
   async renamePost(instanceId: string, name: string): Promise<PostView> {
     const href = this.ro.objectHref(POST_TYPE, instanceId);
-    return this.toPostView(await this.ro.invokeIdempotent(href, 'updateTitle', { name }));
+    await this.ro.invokeIdempotent(href, 'updateTitle', { name });
+    // see renameBlog: action results omit property members, so re-fetch
+    return this.getPost(instanceId);
   }
 
   async updatePostContent(instanceId: string, content: string | null): Promise<void> {
@@ -155,16 +160,19 @@ export class BlogApiService {
     pictureDescription: string | null,
   ): Promise<PostView> {
     const href = this.ro.objectHref(POST_TYPE, instanceId);
-    const repr = await this.ro.invokeIdempotent(href, 'updatePicture', {
+    await this.ro.invokeIdempotent(href, 'updatePicture', {
       picture,
       pictureDescription,
     });
-    return this.toPostView(repr);
+    // see renameBlog: action results omit property members, so re-fetch
+    return this.getPost(instanceId);
   }
 
   async clearPicture(instanceId: string): Promise<PostView> {
     const href = this.ro.objectHref(POST_TYPE, instanceId);
-    return this.toPostView(await this.ro.invokeIdempotent(href, 'clearPicture'));
+    await this.ro.invokeIdempotent(href, 'clearPicture');
+    // see renameBlog: action results omit property members, so re-fetch
+    return this.getPost(instanceId);
   }
 
   async deletePost(instanceId: string): Promise<void> {

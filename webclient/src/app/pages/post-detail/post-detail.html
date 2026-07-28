@@ -39,6 +39,16 @@
       </button>
       <button
         class="btn btn-outline-secondary"
+        (click)="openPanel('editDescription')"
+        [disabled]="!picturePreview() || disabledReason('pictureDescription') !== null"
+        [title]="!picturePreview()
+          ? 'Add a picture before editing its description'
+          : (disabledReason('pictureDescription') ?? 'Edit the picture description')"
+      >
+        &#127991; Edit Description
+      </button>
+      <button
+        class="btn btn-outline-secondary"
         (click)="openPanel('editPicture')"
         [disabled]="disabledReason('updatePicture') !== null"
         [title]="disabledReason('updatePicture') ?? 'Changes this post\'s picture and description'"
@@ -203,7 +213,9 @@
             }
           </div>
           <div class="d-flex gap-2">
-            <button class="btn btn-primary" type="submit" [disabled]="busy()">Save</button>
+            <button class="btn btn-primary" type="submit" [disabled]="busy()">
+              {{ busy() ? 'Saving…' : 'Save' }}
+            </button>
             <button class="btn btn-outline-secondary" type="button" (click)="panel.set('none')">
               Cancel
             </button>
@@ -217,19 +229,6 @@
     <div class="card-body article-preview">
       @if (picturePreview(); as html) {
         <div [innerHTML]="html"></div>
-        <div class="d-flex align-items-center justify-content-center gap-3 mt-2">
-          @if (p.pictureDescription; as description) {
-            <span class="text-secondary small">{{ description }}</span>
-          }
-          <button
-            class="btn btn-sm btn-link p-0"
-            (click)="openPanel('editDescription')"
-            [disabled]="disabledReason('pictureDescription') !== null"
-            [title]="disabledReason('pictureDescription') ?? ''"
-          >
-            Edit description
-          </button>
-        </div>
       }
       @if (contentPreview(); as html) {
         <div class="post-content mx-auto" [innerHTML]="html"></div>
