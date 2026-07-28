@@ -1,25 +1,28 @@
-<nav class="breadcrumbs">
-  <a routerLink="/">&#127968; Home</a>
-  <span>/</span>
-  @if (post()?.blogRef; as blogRef) {
-    <a [routerLink]="['/blogs', blogRef.instanceId]">{{ blogRef.title }}</a>
-    <span>/</span>
-  }
-  <span>{{ post()?.title ?? '…' }}</span>
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a routerLink="/">&#127968; Home</a></li>
+    @if (post()?.blogRef; as blogRef) {
+      <li class="breadcrumb-item">
+        <a [routerLink]="['/blogs', blogRef.instanceId]">{{ blogRef.title }}</a>
+      </li>
+    }
+    <li class="breadcrumb-item active" aria-current="page">{{ post()?.title ?? '…' }}</li>
+  </ol>
 </nav>
 
 @if (loading()) {
-  <p class="muted">Loading…</p>
+  <p class="text-secondary">Loading…</p>
 } @else if (post(); as p) {
-  <header class="page-head">
+  <div class="d-flex flex-wrap justify-content-between align-items-start gap-2 mb-4">
     <div>
-      <h1>&#128196; {{ p.title }}</h1>
+      <h1 class="h3 mb-0">&#128196; {{ p.title }}</h1>
       @if (p.blogRef) {
-        <p class="muted">in {{ p.blogRef.title }}</p>
+        <p class="text-secondary mb-0">in {{ p.blogRef.title }}</p>
       }
     </div>
-    <div class="actions">
+    <div class="d-flex flex-wrap gap-2">
       <button
+        class="btn btn-outline-secondary"
         (click)="openPanel('rename')"
         [disabled]="disabledReason('updateTitle') !== null"
         [title]="disabledReason('updateTitle') ?? 'Renames this post'"
@@ -27,6 +30,7 @@
         &#9998; Rename
       </button>
       <button
+        class="btn btn-outline-secondary"
         (click)="openPanel('editContent')"
         [disabled]="disabledReason('content') !== null"
         [title]="disabledReason('content') ?? 'Edit the post content'"
@@ -34,6 +38,7 @@
         &#9997; Edit Content
       </button>
       <button
+        class="btn btn-outline-secondary"
         (click)="openPanel('editPicture')"
         [disabled]="disabledReason('updatePicture') !== null"
         [title]="disabledReason('updatePicture') ?? 'Changes this post\'s picture and description'"
@@ -41,6 +46,7 @@
         &#128444; Update Picture
       </button>
       <button
+        class="btn btn-outline-secondary"
         (click)="clearPicture()"
         [disabled]="busy() || disabledReason('clearPicture') !== null"
         [title]="disabledReason('clearPicture') ?? 'Removes this post\'s picture and description'"
@@ -48,7 +54,7 @@
         &#10060; Clear Picture
       </button>
       <button
-        class="danger"
+        class="btn btn-outline-danger"
         (click)="deletePost()"
         [disabled]="busy() || disabledReason('delete') !== null"
         [title]="disabledReason('delete') ?? 'Deletes this post'"
@@ -56,122 +62,180 @@
         &#128465; Delete
       </button>
     </div>
-  </header>
+  </div>
 
   @if (panel() === 'rename') {
-    <form class="panel" (ngSubmit)="rename()">
-      <h2>Rename Post</h2>
-      <label>
-        Title
-        <input name="renameValue" [(ngModel)]="renameValue" maxlength="50" required autofocus />
-        @if (fieldErrors()['name']; as err) {
-          <span class="field-error">{{ err }}</span>
-        }
-      </label>
-      <div class="panel-buttons">
-        <button class="primary" type="submit" [disabled]="busy() || !renameValue">Rename</button>
-        <button type="button" (click)="panel.set('none')">Cancel</button>
+    <div class="card border-primary mb-4">
+      <div class="card-body">
+        <h2 class="h5 card-title">Rename Post</h2>
+        <form (ngSubmit)="rename()">
+          <div class="mb-3">
+            <label class="form-label" for="renameValue">Title</label>
+            <input
+              id="renameValue"
+              class="form-control"
+              [class.is-invalid]="fieldErrors()['name']"
+              name="renameValue"
+              [(ngModel)]="renameValue"
+              maxlength="50"
+              required
+              autofocus
+            />
+            @if (fieldErrors()['name']; as err) {
+              <div class="invalid-feedback">{{ err }}</div>
+            }
+          </div>
+          <div class="d-flex gap-2">
+            <button class="btn btn-primary" type="submit" [disabled]="busy() || !renameValue">
+              Rename
+            </button>
+            <button class="btn btn-outline-secondary" type="button" (click)="panel.set('none')">
+              Cancel
+            </button>
+          </div>
+        </form>
       </div>
-    </form>
+    </div>
   }
 
   @if (panel() === 'editContent') {
-    <form class="panel" (ngSubmit)="saveContent()">
-      <h2>Edit Content</h2>
-      <label>
-        Content
-        <textarea name="contentValue" [(ngModel)]="contentValue" rows="12" maxlength="4000">
-        </textarea>
-        @if (fieldErrors()['value']; as err) {
-          <span class="field-error">{{ err }}</span>
-        }
-      </label>
-      <div class="panel-buttons">
-        <button class="primary" type="submit" [disabled]="busy()">
-          {{ busy() ? 'Saving…' : 'Save' }}
-        </button>
-        <button type="button" (click)="panel.set('none')">Cancel</button>
+    <div class="card border-primary mb-4">
+      <div class="card-body">
+        <h2 class="h5 card-title">Edit Content</h2>
+        <form (ngSubmit)="saveContent()">
+          <div class="mb-3">
+            <label class="form-label" for="contentValue">Content</label>
+            <textarea
+              id="contentValue"
+              class="form-control"
+              [class.is-invalid]="fieldErrors()['value']"
+              name="contentValue"
+              [(ngModel)]="contentValue"
+              rows="12"
+              maxlength="4000"
+            ></textarea>
+            @if (fieldErrors()['value']; as err) {
+              <div class="invalid-feedback">{{ err }}</div>
+            }
+          </div>
+          <div class="d-flex gap-2">
+            <button class="btn btn-primary" type="submit" [disabled]="busy()">
+              {{ busy() ? 'Saving…' : 'Save' }}
+            </button>
+            <button class="btn btn-outline-secondary" type="button" (click)="panel.set('none')">
+              Cancel
+            </button>
+          </div>
+        </form>
       </div>
-    </form>
+    </div>
   }
 
   @if (panel() === 'editPicture') {
-    <form class="panel" (ngSubmit)="savePicture()">
-      <h2>Update Picture</h2>
-      <label>
-        Picture
-        <input name="pictureFile" type="file" accept="image/*" (change)="onPictureSelected($event)" />
-        @if (fieldErrors()['picture']; as err) {
-          <span class="field-error">{{ err }}</span>
-        }
-      </label>
-      <label>
-        Picture description
-        <textarea
-          name="pictureDescriptionValue"
-          [(ngModel)]="pictureDescriptionValue"
-          rows="3"
-          maxlength="500"
-        ></textarea>
-        @if (fieldErrors()['pictureDescription']; as err) {
-          <span class="field-error">{{ err }}</span>
-        }
-      </label>
-      <p class="muted hint">
-        Leave the description empty to let the AI generate one (when the Ai profile is active).
-      </p>
-      <div class="panel-buttons">
-        <button class="primary" type="submit" [disabled]="busy()">
-          {{ busy() ? 'Saving…' : 'Save' }}
-        </button>
-        <button type="button" (click)="panel.set('none')">Cancel</button>
+    <div class="card border-primary mb-4">
+      <div class="card-body">
+        <h2 class="h5 card-title">Update Picture</h2>
+        <form (ngSubmit)="savePicture()">
+          <div class="mb-3">
+            <label class="form-label" for="pictureFile">Picture</label>
+            <input
+              id="pictureFile"
+              class="form-control"
+              [class.is-invalid]="fieldErrors()['picture']"
+              name="pictureFile"
+              type="file"
+              accept="image/*"
+              (change)="onPictureSelected($event)"
+            />
+            @if (fieldErrors()['picture']; as err) {
+              <div class="invalid-feedback">{{ err }}</div>
+            }
+          </div>
+          <div class="mb-3">
+            <label class="form-label" for="pictureDescriptionValue">Picture description</label>
+            <textarea
+              id="pictureDescriptionValue"
+              class="form-control"
+              [class.is-invalid]="fieldErrors()['pictureDescription']"
+              name="pictureDescriptionValue"
+              [(ngModel)]="pictureDescriptionValue"
+              rows="3"
+              maxlength="500"
+            ></textarea>
+            @if (fieldErrors()['pictureDescription']; as err) {
+              <div class="invalid-feedback">{{ err }}</div>
+            }
+          </div>
+          <p class="form-text">
+            Leave the description empty to let the AI generate one (when the Ai profile is active).
+          </p>
+          <div class="d-flex gap-2">
+            <button class="btn btn-primary" type="submit" [disabled]="busy()">
+              {{ busy() ? 'Saving…' : 'Save' }}
+            </button>
+            <button class="btn btn-outline-secondary" type="button" (click)="panel.set('none')">
+              Cancel
+            </button>
+          </div>
+        </form>
       </div>
-    </form>
+    </div>
   }
 
   @if (panel() === 'editDescription') {
-    <form class="panel" (ngSubmit)="saveDescription()">
-      <h2>Edit Picture Description</h2>
-      <label>
-        Description
-        <textarea
-          name="descriptionValue"
-          [(ngModel)]="descriptionValue"
-          rows="3"
-          maxlength="500"
-        ></textarea>
-        @if (fieldErrors()['value']; as err) {
-          <span class="field-error">{{ err }}</span>
-        }
-      </label>
-      <div class="panel-buttons">
-        <button class="primary" type="submit" [disabled]="busy()">Save</button>
-        <button type="button" (click)="panel.set('none')">Cancel</button>
+    <div class="card border-primary mb-4">
+      <div class="card-body">
+        <h2 class="h5 card-title">Edit Picture Description</h2>
+        <form (ngSubmit)="saveDescription()">
+          <div class="mb-3">
+            <label class="form-label" for="descriptionValue">Description</label>
+            <textarea
+              id="descriptionValue"
+              class="form-control"
+              [class.is-invalid]="fieldErrors()['value']"
+              name="descriptionValue"
+              [(ngModel)]="descriptionValue"
+              rows="3"
+              maxlength="500"
+            ></textarea>
+            @if (fieldErrors()['value']; as err) {
+              <div class="invalid-feedback">{{ err }}</div>
+            }
+          </div>
+          <div class="d-flex gap-2">
+            <button class="btn btn-primary" type="submit" [disabled]="busy()">Save</button>
+            <button class="btn btn-outline-secondary" type="button" (click)="panel.set('none')">
+              Cancel
+            </button>
+          </div>
+        </form>
       </div>
-    </form>
+    </div>
   }
 
-  <article class="card article">
-    @if (picturePreview(); as html) {
-      <div class="picture-preview" [innerHTML]="html"></div>
-      <div class="picture-meta">
-        @if (p.pictureDescription; as description) {
-          <span class="muted">{{ description }}</span>
-        }
-        <button
-          class="link"
-          (click)="openPanel('editDescription')"
-          [disabled]="disabledReason('pictureDescription') !== null"
-          [title]="disabledReason('pictureDescription') ?? ''"
-        >
-          Edit description
-        </button>
-      </div>
-    }
-    @if (contentPreview(); as html) {
-      <div class="content-preview" [innerHTML]="html"></div>
-    } @else {
-      <p class="muted">This post has no content yet.</p>
-    }
+  <article class="card">
+    <div class="card-body article-preview">
+      @if (picturePreview(); as html) {
+        <div [innerHTML]="html"></div>
+        <div class="d-flex align-items-center justify-content-center gap-3 mt-2">
+          @if (p.pictureDescription; as description) {
+            <span class="text-secondary small">{{ description }}</span>
+          }
+          <button
+            class="btn btn-sm btn-link p-0"
+            (click)="openPanel('editDescription')"
+            [disabled]="disabledReason('pictureDescription') !== null"
+            [title]="disabledReason('pictureDescription') ?? ''"
+          >
+            Edit description
+          </button>
+        </div>
+      }
+      @if (contentPreview(); as html) {
+        <div class="post-content mx-auto" [innerHTML]="html"></div>
+      } @else {
+        <p class="text-secondary mb-0">This post has no content yet.</p>
+      }
+    </div>
   </article>
 }

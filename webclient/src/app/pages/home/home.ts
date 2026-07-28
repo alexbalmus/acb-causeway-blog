@@ -1,6 +1,6 @@
 import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 
 import { BlogApiService, BlogView } from '../../core/blog-api.service';
 import { MessagesService } from '../../core/messages.service';
@@ -17,6 +17,7 @@ type Panel = 'none' | 'newBlog' | 'changeHandle' | 'find';
 export class Home implements OnInit {
   private readonly api = inject(BlogApiService);
   private readonly messages = inject(MessagesService);
+  private readonly router = inject(Router);
 
   readonly blogs = signal<BlogView[]>([]);
   readonly loading = signal(true);
@@ -77,7 +78,8 @@ export class Home implements OnInit {
       const blog = await this.api.createBlog(this.newBlogName.trim(), this.newBlogHandle.trim());
       this.messages.info(`Created '${blog.title}'`);
       this.panel.set('none');
-      await this.refresh();
+      // jump straight to the new blog so the user can start adding posts
+      await this.router.navigate(['/blogs', blog.instanceId]);
     });
   }
 

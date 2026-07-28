@@ -1,36 +1,52 @@
-<div class="login-wrap">
-  <form class="login-card" (ngSubmit)="submit()">
-    <h1><span class="brand-icon">&#9993;</span> ACB Blog</h1>
-    <p class="subtitle">Sign in to manage your blogs</p>
+<div class="row justify-content-center">
+  <div class="col-12 col-sm-8 col-md-6 col-lg-4">
+    <div class="card shadow-sm mt-4">
+      <div class="card-body p-4">
+        <h1 class="h4 text-center mb-1">
+          <span class="text-primary">&#9993;</span> ACB Blog
+        </h1>
+        <p class="text-center text-secondary mb-4">Sign in to manage your blogs</p>
 
-    <label>
-      Username
-      <input
-        name="username"
-        [(ngModel)]="username"
-        autocomplete="username"
-        required
-        autofocus
-      />
-    </label>
+        <form (ngSubmit)="submit()">
+          <div class="mb-3">
+            <label class="form-label" for="username">Username</label>
+            <input
+              id="username"
+              class="form-control"
+              name="username"
+              [(ngModel)]="username"
+              autocomplete="username"
+              required
+              autofocus
+            />
+          </div>
 
-    <label>
-      Password
-      <input
-        name="password"
-        type="password"
-        [(ngModel)]="password"
-        autocomplete="current-password"
-        required
-      />
-    </label>
+          <div class="mb-3">
+            <label class="form-label" for="password">Password</label>
+            <input
+              id="password"
+              class="form-control"
+              name="password"
+              type="password"
+              [(ngModel)]="password"
+              autocomplete="current-password"
+              required
+            />
+          </div>
 
-    @if (error(); as message) {
-      <p class="error">{{ message }}</p>
-    }
+          @if (error(); as message) {
+            <div class="alert alert-danger py-2" role="alert">{{ message }}</div>
+          }
 
-    <button type="submit" [disabled]="busy() || !username || !password">
-      {{ busy() ? 'Signing in…' : 'Sign in' }}
-    </button>
-  </form>
+          <button
+            type="submit"
+            class="btn btn-primary w-100"
+            [disabled]="busy() || !username || !password"
+          >
+            {{ busy() ? 'Signing in…' : 'Sign in' }}
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
 </div>

@@ -1,139 +1,215 @@
-<header class="page-head">
+<div class="d-flex flex-wrap justify-content-between align-items-start gap-2 mb-4">
   <div>
-    <h1>&#127968; {{ heading() }}</h1>
+    <h1 class="h3 mb-0">&#127968; {{ heading() }}</h1>
     @if (currentHandle(); as handle) {
-      <p class="muted">Signed-in handle: <strong>&#64;{{ handle }}</strong></p>
+      <p class="text-secondary mb-0">Signed-in handle: <strong>&#64;{{ handle }}</strong></p>
     }
   </div>
-  <div class="actions">
-    <button class="primary" (click)="openPanel('newBlog')">+ New Blog</button>
+  <div class="d-flex flex-wrap gap-2">
+    <button class="btn btn-primary" (click)="openPanel('newBlog')">+ New Blog</button>
     <button
+      class="btn btn-outline-secondary"
       (click)="openPanel('changeHandle')"
       [disabled]="changeHandleDisabled() !== null"
       [title]="changeHandleDisabled() ?? ''"
     >
       &#64; Change Handle
     </button>
-    <button (click)="openPanel('find')">&#128269; Find Blogs</button>
+    <button class="btn btn-outline-secondary" (click)="openPanel('find')">
+      &#128269; Find Blogs
+    </button>
   </div>
-</header>
+</div>
 
 @if (panel() === 'newBlog') {
-  <form class="panel" (ngSubmit)="createBlog()">
-    <h2>New Blog</h2>
-    <label>
-      Name
-      <input name="name" [(ngModel)]="newBlogName" maxlength="50" required autofocus />
-      @if (fieldErrors()['name']; as err) {
-        <span class="field-error">{{ err }}</span>
-      }
-    </label>
-    <label>
-      Handle
-      <input
-        name="handle"
-        [(ngModel)]="newBlogHandle"
-        maxlength="40"
-        required
-        [disabled]="currentHandle() !== null"
-        [title]="currentHandle() !== null
-          ? 'Handle is already associated with the current user; use Change Handle to change it'
-          : ''"
-      />
-      @if (fieldErrors()['handle']; as err) {
-        <span class="field-error">{{ err }}</span>
-      }
-    </label>
-    <div class="panel-buttons">
-      <button class="primary" type="submit" [disabled]="busy() || !newBlogName || !newBlogHandle">
-        Create
-      </button>
-      <button type="button" (click)="panel.set('none')">Cancel</button>
+  <div class="card border-primary mb-4">
+    <div class="card-body">
+      <h2 class="h5 card-title">New Blog</h2>
+      <form (ngSubmit)="createBlog()">
+        <div class="mb-3">
+          <label class="form-label" for="blogName">Name</label>
+          <input
+            id="blogName"
+            class="form-control"
+            [class.is-invalid]="fieldErrors()['name']"
+            name="name"
+            [(ngModel)]="newBlogName"
+            maxlength="50"
+            required
+            autofocus
+          />
+          @if (fieldErrors()['name']; as err) {
+            <div class="invalid-feedback">{{ err }}</div>
+          }
+        </div>
+        <div class="mb-3">
+          <label class="form-label" for="blogHandle">Handle</label>
+          <input
+            id="blogHandle"
+            class="form-control"
+            [class.is-invalid]="fieldErrors()['handle']"
+            [class.bg-body-secondary]="currentHandle() !== null"
+            name="handle"
+            [(ngModel)]="newBlogHandle"
+            maxlength="40"
+            required
+            [readonly]="currentHandle() !== null"
+            [title]="currentHandle() !== null
+              ? 'This is your handle. To change it, close this dialog and use the “Change Handle” option.'
+              : ''"
+          />
+          @if (fieldErrors()['handle']; as err) {
+            <div class="invalid-feedback">{{ err }}</div>
+          }
+        </div>
+        <div class="d-flex gap-2">
+          <button
+            class="btn btn-primary"
+            type="submit"
+            [disabled]="busy() || !newBlogName || !newBlogHandle"
+          >
+            Create
+          </button>
+          <button class="btn btn-outline-secondary" type="button" (click)="panel.set('none')">
+            Cancel
+          </button>
+        </div>
+      </form>
     </div>
-  </form>
+  </div>
 }
 
 @if (panel() === 'changeHandle') {
-  <form class="panel" (ngSubmit)="changeHandle()">
-    <h2>Change Handle</h2>
-    <p class="muted">Changes your handle and updates all blogs owned by it.</p>
-    <label>
-      New handle
-      <input name="newHandle" [(ngModel)]="newHandle" maxlength="40" required autofocus />
-      @if (fieldErrors()['handle']; as err) {
-        <span class="field-error">{{ err }}</span>
-      }
-    </label>
-    <div class="panel-buttons">
-      <button class="primary" type="submit" [disabled]="busy() || !newHandle">Change</button>
-      <button type="button" (click)="panel.set('none')">Cancel</button>
+  <div class="card border-primary mb-4">
+    <div class="card-body">
+      <h2 class="h5 card-title">Change Handle</h2>
+      <p class="text-secondary">Changes your handle and updates all blogs owned by it.</p>
+      <form (ngSubmit)="changeHandle()">
+        <div class="mb-3">
+          <label class="form-label" for="newHandle">New handle</label>
+          <input
+            id="newHandle"
+            class="form-control"
+            [class.is-invalid]="fieldErrors()['handle']"
+            name="newHandle"
+            [(ngModel)]="newHandle"
+            maxlength="40"
+            required
+            autofocus
+          />
+          @if (fieldErrors()['handle']; as err) {
+            <div class="invalid-feedback">{{ err }}</div>
+          }
+        </div>
+        <div class="d-flex gap-2">
+          <button class="btn btn-primary" type="submit" [disabled]="busy() || !newHandle">
+            Change
+          </button>
+          <button class="btn btn-outline-secondary" type="button" (click)="panel.set('none')">
+            Cancel
+          </button>
+        </div>
+      </form>
     </div>
-  </form>
+  </div>
 }
 
 @if (panel() === 'find') {
-  <form class="panel" (ngSubmit)="search()">
-    <h2>Find Blogs</h2>
-    <label>
-      Name contains
-      <input name="searchText" [(ngModel)]="searchText" maxlength="50" required autofocus />
-    </label>
-    <div class="panel-buttons">
-      <button class="primary" type="submit" [disabled]="busy() || !searchText">Search</button>
-      <button type="button" (click)="panel.set('none')">Close</button>
+  <div class="card border-primary mb-4">
+    <div class="card-body">
+      <h2 class="h5 card-title">Find Blogs</h2>
+      <form (ngSubmit)="search()">
+        <div class="mb-3">
+          <label class="form-label" for="searchText">Name contains</label>
+          <input
+            id="searchText"
+            class="form-control"
+            name="searchText"
+            [(ngModel)]="searchText"
+            maxlength="50"
+            required
+            autofocus
+          />
+        </div>
+        <div class="d-flex gap-2">
+          <button class="btn btn-primary" type="submit" [disabled]="busy() || !searchText">
+            Search
+          </button>
+          <button class="btn btn-outline-secondary" type="button" (click)="panel.set('none')">
+            Close
+          </button>
+        </div>
+      </form>
+
+      @if (searchResults(); as results) {
+        @if (results.length === 0) {
+          <p class="text-secondary mt-3 mb-0">No blogs found.</p>
+        } @else {
+          <div class="table-responsive mt-3">
+            <table class="table table-hover align-middle mb-0">
+              <thead>
+                <tr><th>Name</th><th>Handle</th><th class="text-end"></th></tr>
+              </thead>
+              <tbody>
+                @for (blog of results; track blog.instanceId) {
+                  <tr>
+                    <td>{{ blog.name }}</td>
+                    <td>&#64;{{ blog.handle }}</td>
+                    <td class="text-end">
+                      <a class="btn btn-sm btn-outline-primary" [routerLink]="['/blogs', blog.instanceId]">
+                        Open
+                      </a>
+                    </td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        }
+      }
     </div>
-    @if (searchResults(); as results) {
-      @if (results.length === 0) {
-        <p class="muted">No blogs found.</p>
-      } @else {
-        <table>
+  </div>
+}
+
+<div class="card">
+  <div class="card-body">
+    <h2 class="h5 card-title">My Blogs</h2>
+    @if (loading()) {
+      <p class="text-secondary mb-0">Loading…</p>
+    } @else if (blogs().length === 0) {
+      <p class="text-secondary mb-0">You have no blogs yet — create one with “New Blog”.</p>
+    } @else {
+      <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
           <thead>
-            <tr><th>Name</th><th>Handle</th><th></th></tr>
+            <tr><th>Name</th><th>Handle</th><th class="text-end"></th></tr>
           </thead>
           <tbody>
-            @for (blog of results; track blog.instanceId) {
+            @for (blog of blogs(); track blog.instanceId) {
               <tr>
-                <td>{{ blog.name }}</td>
+                <td>
+                  <a class="fw-semibold text-decoration-none" [routerLink]="['/blogs', blog.instanceId]">
+                    {{ blog.name }}
+                  </a>
+                </td>
                 <td>&#64;{{ blog.handle }}</td>
-                <td class="row-actions">
-                  <a [routerLink]="['/blogs', blog.instanceId]">Open</a>
+                <td class="text-end">
+                  <a class="btn btn-sm btn-outline-primary me-2" [routerLink]="['/blogs', blog.instanceId]">
+                    Open
+                  </a>
+                  <button
+                    class="btn btn-sm btn-outline-danger"
+                    [disabled]="busy()"
+                    (click)="deleteBlog(blog)"
+                  >
+                    Delete
+                  </button>
                 </td>
               </tr>
             }
           </tbody>
         </table>
-      }
+      </div>
     }
-  </form>
-}
-
-<section class="card">
-  <h2>My Blogs</h2>
-  @if (loading()) {
-    <p class="muted">Loading…</p>
-  } @else if (blogs().length === 0) {
-    <p class="muted">You have no blogs yet — create one with “New Blog”.</p>
-  } @else {
-    <table>
-      <thead>
-        <tr><th>Name</th><th>Handle</th><th></th></tr>
-      </thead>
-      <tbody>
-        @for (blog of blogs(); track blog.instanceId) {
-          <tr>
-            <td>
-              <a class="strong" [routerLink]="['/blogs', blog.instanceId]">{{ blog.name }}</a>
-            </td>
-            <td>&#64;{{ blog.handle }}</td>
-            <td class="row-actions">
-              <a [routerLink]="['/blogs', blog.instanceId]">Open</a>
-              <button class="link danger" [disabled]="busy()" (click)="deleteBlog(blog)">
-                Delete
-              </button>
-            </td>
-          </tr>
-        }
-      </tbody>
-    </table>
-  }
-</section>
+  </div>
+</div>

@@ -16,6 +16,17 @@ REST API that Apache Causeway auto-generates from the domain model (the
   corresponding buttons (e.g. ownership vetoes), and 422 validation responses
   are shown as per-field errors (e.g. duplicate titles, AI safety checks)
 
+## Styling
+
+The UI is built with **Bootstrap 5** and the **Bootswatch "Litera"** theme —
+the same theme the Wicket viewer uses (`causeway.viewer.wicket.themes.initial`
+in `application.yml`), so both front-ends look consistent. The theme is a
+prebuilt stylesheet (`bootswatch/dist/litera/bootstrap.min.css`) wired into
+`angular.json`; no Bootstrap JavaScript is used (panels and toasts are driven
+by Angular). App-specific CSS is limited to a few rules in `src/styles.css`
+(post-preview typography and the toast stack); components style themselves
+with Bootstrap utility classes in their templates.
+
 ## Running
 
 1. Start the backend from the repo root (the REST API listens on

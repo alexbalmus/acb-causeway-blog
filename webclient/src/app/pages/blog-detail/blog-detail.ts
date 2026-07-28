@@ -102,7 +102,8 @@ export class BlogDetail implements OnInit {
       );
       this.messages.info(`Created '${post.title}'`);
       this.panel.set('none');
-      await this.refresh();
+      // jump straight to the new post
+      await this.router.navigate(['/posts', post.instanceId]);
     });
   }
 
