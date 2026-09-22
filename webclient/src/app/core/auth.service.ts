@@ -36,7 +36,7 @@ export class AuthService {
       return;
     }
     try {
-      const user = await firstValueFrom(this.http.get<UserRepr>('/restful/user'));
+      const user = await firstValueFrom(this.http.get<UserRepr>('/restful/user/'));
       this.userName.set(user.userName);
       this.roles.set(user.roles ?? []);
     } catch {
@@ -48,7 +48,7 @@ export class AuthService {
     const encoded = btoa(`${username}:${password}`);
     const headers = new HttpHeaders({ Authorization: `Basic ${encoded}` });
     const user = await firstValueFrom(
-      this.http.get<UserRepr>('/restful/user', { headers }),
+      this.http.get<UserRepr>('/restful/user/', { headers }),
     );
     sessionStorage.setItem(STORAGE_KEY, encoded);
     this.userName.set(user.userName);

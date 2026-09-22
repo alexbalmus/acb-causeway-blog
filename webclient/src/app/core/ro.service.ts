@@ -16,7 +16,7 @@ import {
 /**
  * Generic client for the Restful Objects API exposed by Apache Causeway
  * under /restful. Encapsulates the invocation conventions:
- *  - safe actions      -> GET  .../invoke with plain query parameters
+ *  - safe actions      -> GET  .../invoke with JSON in x-causeway-querystring
  *  - idempotent        -> PUT  .../invoke with {"param":{"value":...}} body
  *  - non-idempotent    -> POST .../invoke with the same body shape
  *  - editable property -> PUT  .../properties/{id} with {"value":...}
@@ -74,10 +74,12 @@ export class RoService {
     actionId: string,
     args: Record<string, string> = {},
   ): Promise<RoObjectRepr> {
-    let params = new HttpParams();
-    for (const [key, value] of Object.entries(args)) {
-      params = params.set(key, value);
-    }
+    // Causeway 4 requires this parameter even for actions without arguments.
+    // Arguments use the same {param: {value: ...}} representation as POST/PUT.
+    const params = new HttpParams().set(
+      'x-causeway-querystring',
+      JSON.stringify(this.wrapArgs(args)),
+    );
     return this.request<RoObjectRepr>('GET', `${memberHref}/actions/${actionId}/invoke`, {
       params,
     });

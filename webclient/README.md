@@ -63,8 +63,9 @@ with Bootstrap utility classes in their templates.
 
 Invocation conventions (verified against Causeway 3.6):
 
-- **Safe** actions → `GET .../actions/{id}/invoke` with *plain* query
-  parameters (`?name=My`), not JSON-encoded ones.
+- **Safe** actions → `GET .../actions/{id}/invoke` with the query
+  parameter `x-causeway-querystring` containing JSON (`{"name":{"value":"My"}}`).
+  Actions without arguments still require this parameter, with `{}` as its value.
 - **Idempotent** actions → `PUT .../invoke` with `{"param":{"value":...}}`.
 - **Non-idempotent** actions → `POST .../invoke` with the same body shape.
 - **Editable properties** → `PUT .../properties/{id}` with `{"value":...}`.

@@ -9,7 +9,7 @@ import org.apache.causeway.core.runtimeservices.CausewayModuleCoreRuntimeService
 import org.apache.causeway.persistence.jpa.eclipselink.CausewayModulePersistenceJpaEclipselink;
 import org.apache.causeway.testing.h2console.ui.CausewayModuleTestingH2ConsoleUi;
 import org.apache.causeway.viewer.graphql.viewer.CausewayModuleViewerGraphqlViewer;
-import org.apache.causeway.viewer.restfulobjects.jaxrsresteasy.CausewayModuleViewerRestfulObjectsJaxrsResteasy;
+import org.apache.causeway.viewer.restfulobjects.viewer.CausewayModuleViewerRestfulObjectsViewer;
 import org.apache.causeway.viewer.wicket.applib.CausewayModuleViewerWicketApplibMixins;
 import org.apache.causeway.viewer.wicket.viewer.CausewayModuleViewerWicketViewer;
 
@@ -35,7 +35,7 @@ import java.util.List;
     CausewayModuleCoreRuntimeServices.class,
     CausewayModuleSecuritySimple.class,
     CausewayModulePersistenceJpaEclipselink.class,
-    CausewayModuleViewerRestfulObjectsJaxrsResteasy.class,
+    CausewayModuleViewerRestfulObjectsViewer.class,
     CausewayModuleViewerGraphqlViewer.class,
     CausewayModuleViewerWicketApplibMixins.class,
     CausewayModuleViewerWicketViewer.class,
@@ -71,12 +71,12 @@ public class AppManifest
                             ? Grant.CHANGE
                             : Grant.NONE)
             .addRole("default_role", id->
-                    id.getLogicalType().getNamespace().startsWith("causeway.applib")
-                            || id.getLogicalType().getNamespace().startsWith("causeway.security")
+                    id.logicalType().namespace().startsWith("causeway.applib")
+                            || id.logicalType().namespace().startsWith("causeway.security")
                             ? Grant.CHANGE
                             : Grant.NONE)
             .addRole("fixtures_role", id->
-                    id.getLogicalType().getNamespace().startsWith("causeway.testing.fixtures")
+                    id.logicalType().namespace().startsWith("causeway.testing.fixtures")
                             ? Grant.CHANGE
                             : Grant.NONE)
             .addUser("sven", hashedPass, List.of("admin_role"))
