@@ -28,6 +28,7 @@ export class Login {
     } catch {
       this.error.set('Login failed — check your username and password.');
     } finally {
+      this.password = '';
       this.busy.set(false);
     }
   }

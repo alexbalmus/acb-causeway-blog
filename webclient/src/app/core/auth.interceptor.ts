@@ -2,33 +2,26 @@ import { HttpErrorResponse, HttpInterceptorFn } from '@angular/common/http';
 import { inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { catchError, throwError } from 'rxjs';
-
 import { AuthService } from './auth.service';
+import { MessagesService } from './messages.service';
 
-/**
- * Attaches the stored Basic credentials to every /restful request and
- * bounces to the login page when the server answers 401.
- */
+/** Cookies and Angular's built-in XSRF interceptor authenticate same-origin requests. */
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const auth = inject(AuthService);
   const router = inject(Router);
-
-  let request = req;
-  if (req.url.startsWith('/restful') && !req.headers.has('Authorization') && auth.credentials) {
-    request = req.clone({
-      setHeaders: { Authorization: `Basic ${auth.credentials}` },
-    });
-  }
-
-  return next(request).pipe(
+  const messages = inject(MessagesService);
+  const isApi = /^\/(?:api|restful|graphql)(?:\/|$|\?)/.test(req.url);
+  return next(req).pipe(
     catchError((error: unknown) => {
-      if (
-        error instanceof HttpErrorResponse &&
-        error.status === 401 &&
-        !req.headers.has('Authorization') // not the login probe itself
-      ) {
-        auth.logout();
-        router.navigate(['/login']);
+      if (isApi && error instanceof HttpErrorResponse) {
+        if (error.status === 401 && req.url !== '/api/auth/login') {
+          auth.clearIdentity();
+          void router.navigate(['/login']);
+        } else if (error.status === 403) {
+          messages.error(error.error?.error === 'csrf'
+            ? 'The security token is no longer valid. Reload the page and try again.'
+            : 'You do not have permission to perform this action.');
+        }
       }
       return throwError(() => error);
     }),

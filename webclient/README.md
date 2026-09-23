@@ -5,7 +5,7 @@ REST API that Apache Causeway auto-generates from the domain model (the
 [Restful Objects](https://www.restfulobjects.org) viewer, served under
 `/restful`), and mirrors the functionality of the default Wicket UI:
 
-- **Sign in** with the app's users (HTTP Basic against `/restful/user`)
+- **Sign in** with the app's users (Spring Security session login with CSRF protection)
 - **Home**: your blogs, New Blog, Change Handle, Delete Blog, Find Blogs
 - **Blog page**: rename, posts list, New Post (title, content, picture,
   picture description), Delete Post, Delete Blog
@@ -29,6 +29,8 @@ with Bootstrap utility classes in their templates.
 
 ## Running
 
+See [authentication setup](../SECURITY.md) for required development-account passwords.
+
 1. Start the backend from the repo root (the REST API listens on
    `127.0.0.1:8080`):
 
@@ -44,10 +46,9 @@ with Bootstrap utility classes in their templates.
    ```
 
    `npm start` runs `ng serve` with `proxy.conf.json`, which forwards
-   `/restful` to the backend — same-origin, so no CORS setup is needed.
+   `/api` and `/restful` to the backend — same-origin, so no CORS setup is needed.
 
-3. Open <http://localhost:4200> and sign in (e.g. `sven` / `pass` — the only
-   user whose role currently grants the `blog.*` namespace).
+3. Open <http://localhost:4200> and sign in with a configured development account.
 
 ## How it talks to Causeway
 
@@ -57,8 +58,8 @@ with Bootstrap utility classes in their templates.
 | --------------------- | ---------------------------------------------------------------- |
 | `ro.service.ts`       | Generic Restful Objects client (objects, collections, actions)   |
 | `blog-api.service.ts` | Domain facade: one method per Blog/Post action or property       |
-| `auth.service.ts`     | Basic-auth credentials, validated against `GET /restful/user`    |
-| `auth.interceptor.ts` | Attaches credentials to `/restful` requests, handles 401         |
+| `auth.service.ts`     | Cookie session, identity from `GET /api/auth/me`    |
+| `auth.interceptor.ts` | Handles API 401/403; Angular sends the CSRF header         |
 | `ro.types.ts`         | Typings for RO representations + validation-error extraction     |
 
 Invocation conventions (verified against Causeway 3.6):

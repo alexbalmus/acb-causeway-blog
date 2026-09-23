@@ -15,8 +15,12 @@ export class App {
   protected readonly messages = inject(MessagesService);
   private readonly router = inject(Router);
 
-  logout(): void {
-    this.auth.logout();
-    this.router.navigate(['/login']);
+  async logout(): Promise<void> {
+    try {
+      await this.auth.logout();
+      await this.router.navigate(['/login']);
+    } catch {
+      this.messages.error('Sign out could not be completed. Please try again.');
+    }
   }
 }

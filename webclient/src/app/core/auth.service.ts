@@ -1,63 +1,61 @@
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable, inject, signal } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
-
-const STORAGE_KEY = 'acb.auth';
 
 interface UserRepr {
   userName: string;
   roles: string[];
 }
 
-/**
- * Holds the HTTP Basic credentials for the Causeway REST API.
- * Credentials are verified against GET /restful/user and kept in
- * sessionStorage so a page reload does not log the user out.
- */
+/** Server-confirmed identity; authentication stays in the HttpOnly session cookie. */
 @Injectable({ providedIn: 'root' })
 export class AuthService {
   private readonly http = inject(HttpClient);
-
   readonly userName = signal<string | null>(null);
   readonly roles = signal<string[]>([]);
 
-  /** base64("user:pass") or null when not logged in */
-  get credentials(): string | null {
-    return sessionStorage.getItem(STORAGE_KEY);
-  }
+  constructor() { sessionStorage.removeItem('acb.auth'); }
 
-  get isLoggedIn(): boolean {
-    return this.credentials !== null;
-  }
+  get isLoggedIn(): boolean { return this.userName() !== null; }
 
-  /** Re-validates stored credentials on app start; clears them if stale. */
   async restoreSession(): Promise<void> {
-    if (!this.credentials) {
-      return;
-    }
     try {
-      const user = await firstValueFrom(this.http.get<UserRepr>('/restful/user/'));
-      this.userName.set(user.userName);
-      this.roles.set(user.roles ?? []);
+      await this.refreshCsrf();
+      await this.loadIdentity();
     } catch {
-      this.logout();
+      this.clearIdentity();
     }
   }
 
   async login(username: string, password: string): Promise<void> {
-    const encoded = btoa(`${username}:${password}`);
-    const headers = new HttpHeaders({ Authorization: `Basic ${encoded}` });
-    const user = await firstValueFrom(
-      this.http.get<UserRepr>('/restful/user/', { headers }),
-    );
-    sessionStorage.setItem(STORAGE_KEY, encoded);
-    this.userName.set(user.userName);
-    this.roles.set(user.roles ?? []);
+    this.clearIdentity();
+    await this.refreshCsrf();
+    const body = new HttpParams().set('username', username).set('password', password);
+    await firstValueFrom(this.http.post('/api/auth/login', body));
+    await this.refreshCsrf();
+    await this.loadIdentity();
   }
 
-  logout(): void {
-    sessionStorage.removeItem(STORAGE_KEY);
+  async logout(): Promise<void> {
+    await this.refreshCsrf();
+    await firstValueFrom(this.http.post('/api/auth/logout', null));
+    this.clearIdentity();
+    // Logout succeeded even if the next CSRF bootstrap is temporarily unavailable.
+    await this.refreshCsrf().catch(() => undefined);
+  }
+
+  clearIdentity(): void {
     this.userName.set(null);
     this.roles.set([]);
+  }
+
+  private async refreshCsrf(): Promise<void> {
+    await firstValueFrom(this.http.get('/api/auth/csrf'));
+  }
+
+  private async loadIdentity(): Promise<void> {
+    const user = await firstValueFrom(this.http.get<UserRepr>('/api/auth/me'));
+    this.userName.set(user.userName);
+    this.roles.set(user.roles ?? []);
   }
 }

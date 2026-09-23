@@ -18,7 +18,7 @@ export const appConfig: ApplicationConfig = {
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(routes, withComponentInputBinding()),
     provideHttpClient(withInterceptors([authInterceptor])),
-    // re-validate stored credentials (if any) before the first page renders
+    // Restore the server-side session before the first route is activated.
     provideAppInitializer(() => inject(AuthService).restoreSession()),
   ],
 };

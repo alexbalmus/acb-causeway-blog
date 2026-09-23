@@ -95,7 +95,7 @@
             <mb3:section>
                 <mb3:named>Security</mb3:named>
                 <mb3:serviceAction objectType="causeway.applib.UserMenu" id="me"/>
-                <mb3:serviceAction objectType="causeway.security.LogoutMenu" id="logout"/>
+                <mb3:serviceAction objectType="acb.security.SessionMenu" id="logout"/>
             </mb3:section>
         </mb3:menu>
     </mb3:tertiary>
