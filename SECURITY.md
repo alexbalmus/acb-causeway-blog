@@ -1,9 +1,26 @@
 # Authentication and local development
 
 The application uses Spring Security **server-side sessions**, shared by Angular,
-Wicket and GraphQL. Passwords use BCrypt. No Basic credentials or JWTs are stored
+Wicket, the JTE/HTMX blog client and GraphQL. Passwords use BCrypt. No Basic credentials or JWTs are stored
 in browser storage. The session cookie is HttpOnly, SameSite=Lax and expires after
 30 minutes of inactivity. Logout invalidates the server session.
+
+## Public blog client
+
+`/blog` lists and searches all blogs. `/blog/blogs/{id}` and `/blog/posts/{id}`
+are readable without signing in, including pictures and captions. There is no
+private/draft state; existing and newly created content is publicly readable here.
+The existing Angular, Wicket, REST and GraphQL authentication requirements remain.
+
+Edit links lead to protected editor pages and `/blog/login`, then return to the
+requested local editor. All changes use authenticated, CSRF-protected POSTs and
+enforce ownership through Causeway wrappers. An administrator cannot edit another
+user's blog. POST `/blog/logout` invalidates the same session used by other clients.
+HTMX receives HTML fragments, never credentials or session tokens in browser storage.
+History snapshots are disabled and personalized HTML uses `Cache-Control: no-store`.
+
+The new multipart upload path limits file size and decoded pixel count before
+image decoding. These limits do not change the existing REST image-upload contract.
 
 ## Start locally
 

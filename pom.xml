@@ -24,6 +24,7 @@
         <!-- The M2 BOM retains ${project.version} in managed Causeway dependencies. -->
         <causeway.version>4.0.0-M2</causeway.version>
         <spring-ai.version>2.0.0</spring-ai.version>
+        <jte.version>3.2.4</jte.version>
 
         <!-- https://stackoverflow.com/questions/38983934/cannot-get-maven-project-version-property-in-a-spring-application-with-value/38983935#38983935 -->
         <resource.delimiter>^</resource.delimiter>
@@ -54,6 +55,22 @@
             </resource>
         </resources>
         <plugins>
+            <plugin>
+                <groupId>gg.jte</groupId>
+                <artifactId>jte-maven-plugin</artifactId>
+                <version>${jte.version}</version>
+                <executions>
+                    <execution>
+                        <phase>generate-sources</phase>
+                        <goals><goal>generate</goal></goals>
+                        <configuration>
+                            <sourceDirectory>${project.basedir}/src/main/jte</sourceDirectory>
+                            <targetDirectory>${project.build.directory}/generated-sources/jte</targetDirectory>
+                            <contentType>Html</contentType>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -241,6 +258,21 @@
     </dependencyManagement>
 
     <dependencies>
+        <dependency>
+            <groupId>gg.jte</groupId>
+            <artifactId>jte-spring-boot-starter-4</artifactId>
+            <version>${jte.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.webjars.npm</groupId>
+            <artifactId>htmx.org</artifactId>
+            <version>2.0.8</version>
+        </dependency>
+        <dependency>
+            <groupId>org.webjars.npm</groupId>
+            <artifactId>bootswatch</artifactId>
+            <version>5.3.8</version>
+        </dependency>
 
         <dependency>
             <groupId>com.h2database</groupId>

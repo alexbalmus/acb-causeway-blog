@@ -85,6 +85,10 @@ server:
   max-http-header-size: 16KB
 
 spring:
+  servlet:
+    multipart:
+      max-file-size: 5MB
+      max-request-size: 6MB
   banner:
     location: banner.txt
   graphql:
@@ -96,6 +100,9 @@ spring:
         enabled: false
 
 acb:
+  blog:
+    max-image-bytes: 5242880
+    max-image-pixels: 20000000
   security:
     secure-cookies: ${ACB_SECURE_COOKIES:false}
 
@@ -103,4 +110,8 @@ management:
   endpoint:
     health:
       enabled: true
+
+gg:
+  jte:
+    use-precompiled-templates: true
 

@@ -87,6 +87,55 @@ public class SecurityConfiguration {
 
     @Bean
     @Order(2)
+    SecurityFilterChain blogSecurity(HttpSecurity http,
+            @Value("${acb.security.secure-cookies:false}") boolean secureCookies) throws Exception {
+        configureSession(http, secureCookies);
+        var cache = new org.springframework.security.web.savedrequest.HttpSessionRequestCache();
+        cache.setRequestMatcher(request -> request.getMethod().equals("GET")
+                && request.getServletPath().startsWith("/blog/")
+                && !request.getServletPath().equals("/blog/login"));
+        http.securityMatcher("/blog", "/blog/**")
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers(HttpMethod.GET, "/blog", "/blog/", "/blog/login", "/blog/assets/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/blog/login").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/blog/blogs/{id}", "/blog/posts/{id}").permitAll()
+                        .anyRequest().authenticated())
+                .requestCache(requests -> requests.requestCache(cache))
+                .formLogin(login -> login.loginPage("/blog/login").loginProcessingUrl("/blog/login")
+                        .failureUrl("/blog/login?error")
+                        .successHandler((request, response, authentication) -> {
+                            var saved = cache.getRequest(request, response);
+                            String target = "/blog/my";
+                            if (saved != null) {
+                                var uri = java.net.URI.create(saved.getRedirectUrl());
+                                String path = uri.getRawPath();
+                                if (path.startsWith("/blog/") && !path.contains("%") && !path.contains("\\"))
+                                    target = path + (uri.getRawQuery() == null ? "" : "?" + uri.getRawQuery());
+                            }
+                            cache.removeRequest(request, response);
+                            response.sendRedirect(target);
+                        }))
+                .logout(logout -> logout.logoutUrl("/blog/logout")
+                        .deleteCookies("JSESSIONID", "XSRF-TOKEN").logoutSuccessUrl("/blog"))
+                .exceptionHandling(errors -> errors
+                        .authenticationEntryPoint((request, response, exception) -> {
+                            if ("true".equals(request.getHeader("HX-Request"))) {
+                                response.setHeader("HX-Redirect", "/blog/login");
+                                response.setStatus(401);
+                            } else response.sendRedirect("/blog/login");
+                        })
+                        .accessDeniedHandler((request, response, exception) -> {
+                            if ("true".equals(request.getHeader("HX-Request"))
+                                    && exception instanceof org.springframework.security.web.csrf.CsrfException) {
+                                response.setHeader("HX-Redirect", "/blog/login?expired");
+                                response.setStatus(403);
+                            } else response.sendError(403);
+                        }));
+        return http.build();
+    }
+
+    @Bean
+    @Order(3)
     SecurityFilterChain browserSecurity(HttpSecurity http,
             @Value("${acb.security.secure-cookies:false}") boolean secureCookies) throws Exception {
         configureSession(http, secureCookies);

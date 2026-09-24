@@ -39,6 +39,43 @@ or with Spring Ai:
 mvn spring-boot:run -Dspring-boot.run.profiles=Dev,Ai -Dspring-boot.run.jvmArguments="-DPROTOTYPING=false"
 
 
+== Server-rendered blog client
+
+Open http://localhost:8080/blog after starting the application. This client uses
+Spring MVC, JTE templates, HTMX and Bootstrap Litera. All existing blogs and posts
+are publicly readable and searchable here. Click Edit to sign in with an existing
+account and return to the editor. Only the owner can change a blog or its posts.
+My Blogs includes blog creation and handle management.
+
+The client shares the server-side session with Angular and Wicket. Use the same
+hostname in each client. Signing out invalidates the shared session. REST and
+GraphQL still require authentication; this does not expose those APIs publicly.
+
+HTMX updates forms and articles without a full page reload. Normal links and
+forms also work without JavaScript. JavaScript dependencies are pinned WebJars
+served locally; building this client requires Maven only, with no Node build.
+
+`mvn package` compiles the templates into the executable JAR. For template
+reloading, run from the project directory with the additional `jte-dev` profile:
+
+[source,shell]
+----
+mvn spring-boot:run -Dspring-boot.run.profiles=Dev,jte-dev
+----
+
+Templates live in `src/main/jte/blog`; Java controllers and presentation services
+live in `webapp.blog`. Existing Causeway actions, mixins and property rules handle
+mutations through wrappers. JTE view models contain presentation data, not entities.
+
+New-client picture uploads default to 5 MiB and 20 megapixels. Configure
+`acb.blog.max-image-bytes` and `acb.blog.max-image-pixels` to change these limits;
+also adjust `spring.servlet.multipart.max-file-size` and `max-request-size` if
+raising the byte limit. Invalid images are rejected before persistence.
+
+No publication flag or draft state is introduced: creating a post makes it
+readable immediately. Account provisioning and the existing database configuration
+are unchanged. See `SECURITY.md` for account setup.
+
 == Angular web client
 
 The `webclient/` folder contains an Angular frontend that consumes the
