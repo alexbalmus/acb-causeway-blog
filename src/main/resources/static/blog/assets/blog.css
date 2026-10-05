@@ -1,0 +1,9 @@
+body { background-color: var(--bs-light); }
+.article-preview { line-height: 1.7; }
+.article-preview img { max-width: 100%; height: auto; }
+.article-preview .post-content { max-width: 42rem; text-align: justify; overflow-wrap: anywhere; }
+.article-preview .acb-post-caption { text-align: center; color: var(--bs-secondary-color); font-size: .9rem; margin-top: .5rem; }
+.login-card { max-width: 26rem; }
+.network-error { position: fixed; bottom: 1rem; right: 1rem; max-width: min(26rem, 90vw); z-index: 1080; }
+#blog-content:focus { outline: none; }
+@media (max-width: 576px) { .navbar-text { display: none; } .article-preview .post-content { text-align: left; } }
