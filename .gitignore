@@ -58,3 +58,5 @@ replay_pid*
 /target/maven-archiver/pom.properties
 /.idea/uiDesigner.xml
 /.idea/codeStyles/codeStyleConfig.xml
+
+/target/

@@ -39,6 +39,74 @@ or with Spring Ai:
 mvn spring-boot:run -Dspring-boot.run.profiles=Dev,Ai -Dspring-boot.run.jvmArguments="-DPROTOTYPING=false"
 
 
+== Server-rendered blog client
+
+Open http://localhost:8080/blog after starting the application. This client uses
+Spring MVC, JTE templates, HTMX and Bootstrap Litera. All blogs and posts are
+publicly readable and searchable. Click Edit to sign in and return to the editor;
+My Blogs includes creation and handle management. New posts are immediately public.
+
+This branch uses Causeway 3.6.0 with the JTE Spring Boot 3 starter. JAXB is pinned
+to 4.0.9 to fix the 4.0.7 XML escaping regression affecting multiline commands in
+Wicket, REST and JTE. The existing native Causeway realm and RESTEasy viewer remain
+in place.
+
+Authentication uses Causeway's configured `AuthenticationManager` and `SimpleRealm`,
+the same accounts and grants as the default viewers. With the current demo realm,
+use `sven` / `pass` to manage blogs. The other demo accounts have no blog-management
+grant. The client preserves these permissions, and only a blog's owner may edit it,
+even when another account has an administrator grant.
+
+The JTE client keeps a separate authenticated Causeway context in the servlet
+session, not a password. It does not introduce Spring Security or a new account
+store. Angular continues using HTTP Basic and Wicket retains its own login.
+Signing in or out of JTE does not sign in or out of these other viewers.
+JTE login rotates the session ID; logout and session expiry close its Causeway
+authentication code. Forms, uploads, login and logout require a session-bound
+CSRF token; logout is POST-only. HTMX history snapshots are disabled.
+
+HTMX updates forms, validation messages and articles without a full reload.
+Normal links and forms also work with JavaScript disabled. The client serves
+pinned HTMX and Bootswatch assets locally and needs Maven only to build.
+`mvn package` compiles the templates into the executable JAR.
+
+For template reloading, run from the project directory with the `jte-dev` profile:
+
+[source,shell]
+----
+mvn spring-boot:run -Dspring-boot.run.profiles=Dev,jte-dev
+----
+
+Templates live in `src/main/jte/blog`. Controllers and presentation services live
+in `webapp.blog`. Authenticated mutations use Causeway wrappers for actions,
+mixins and property changes, retaining realm authorization, ownership, validation
+and AI behavior. Anonymous requests use a read-only presentation service.
+
+JTE picture uploads default to 5 MiB and 20 megapixels. Configure
+`acb.blog.max-image-bytes` and `acb.blog.max-image-pixels` to change these limits;
+also adjust `spring.servlet.multipart.max-file-size` and `max-request-size` when
+raising the byte limit. These limits do not change the existing REST upload API.
+The repository's loopback-only demo configuration remains in place.
+
+The Java suite covers native authentication, realm grants, ownership, CSRF,
+session expiry, uploads and AI behavior. Optional browser regression checks also
+exercise Angular and Wicket alongside JTE. After `mvn package` and the Angular
+production build, run from the repository root:
+
+[source,shell]
+----
+npm install --prefix target/browser --no-save playwright
+node src/test/browser/blog-client.mjs
+----
+
+These checks include Wicket blog creation, multiline posts with and without a
+picture, and reading Wicket-created content through JTE. The Java suite also
+checks XML round-tripping of carriage returns, tabs and escaped text.
+
+The browser check uses a temporary in-memory app on port 18080 and an Angular
+test server on port 14200, and stops both afterward. Set `CHROME_BIN` if Chrome
+is not installed at the default Windows location. Screenshots are saved in `target/`.
+
 == Angular web client
 
 The `webclient/` folder contains an Angular frontend that consumes the

@@ -22,6 +22,10 @@
     <properties>
         <java.version>25</java.version>
         <spring-ai.version>1.1.5</spring-ai.version>
+        <jte.version>3.2.4</jte.version>
+        <!-- Fix JAXB 4.0.7's CR/tab XML escaping regression in all Causeway viewers.
+             https://github.com/eclipse-ee4j/jaxb-ri/pull/1926 -->
+        <glassfish-jaxb.version>4.0.9</glassfish-jaxb.version>
 
         <!-- https://stackoverflow.com/questions/38983934/cannot-get-maven-project-version-property-in-a-spring-application-with-value/38983935#38983935 -->
         <resource.delimiter>^</resource.delimiter>
@@ -52,6 +56,22 @@
             </resource>
         </resources>
         <plugins>
+            <plugin>
+                <groupId>gg.jte</groupId>
+                <artifactId>jte-maven-plugin</artifactId>
+                <version>${jte.version}</version>
+                <executions>
+                    <execution>
+                        <phase>generate-sources</phase>
+                        <goals><goal>generate</goal></goals>
+                        <configuration>
+                            <sourceDirectory>${project.basedir}/src/main/jte</sourceDirectory>
+                            <targetDirectory>${project.build.directory}/generated-sources/jte</targetDirectory>
+                            <contentType>Html</contentType>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -89,6 +109,13 @@
     <dependencyManagement>
         <dependencies>
             <dependency>
+                <groupId>org.glassfish.jaxb</groupId>
+                <artifactId>jaxb-bom</artifactId>
+                <version>${glassfish-jaxb.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
                 <groupId>org.springframework.ai</groupId>
                 <artifactId>spring-ai-bom</artifactId>
                 <version>${spring-ai.version}</version>
@@ -99,6 +126,28 @@
     </dependencyManagement>
 
     <dependencies>
+
+        <dependency>
+            <groupId>gg.jte</groupId>
+            <artifactId>jte-spring-boot-starter-3</artifactId>
+            <version>${jte.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-starter-logging</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.webjars.npm</groupId>
+            <artifactId>htmx.org</artifactId>
+            <version>2.0.8</version>
+        </dependency>
+        <dependency>
+            <groupId>org.webjars.npm</groupId>
+            <artifactId>bootswatch</artifactId>
+            <version>5.3.8</version>
+        </dependency>
 
         <dependency>
             <groupId>org.springframework.ai</groupId>
