@@ -5,7 +5,7 @@ https://causeway.apache.org
 
 Tested with:
 
-- Open JDK 25 (should work with 21)
+- Open JDK 21 and 25
 - Apache Maven 3.9.15
 - NodeJS v24.14.0
 
