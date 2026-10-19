@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ApplicationContext;
+import org.springframework.test.context.ActiveProfiles;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -15,6 +16,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  * implies that the Causeway metamodel is valid.
  */
 @SpringBootTest(classes = ACBBlogApp.class)
+@ActiveProfiles("test")
 class ACBBlogApp_SmokeTest
 {
     @Autowired

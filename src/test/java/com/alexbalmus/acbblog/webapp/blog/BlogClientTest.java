@@ -26,7 +26,7 @@ import org.springframework.test.context.ActiveProfiles;
 @SpringBootTest(classes = ACBBlogApp.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
         properties = {"spring.datasource.url=jdbc:h2:mem:blogclient;DATABASE_TO_UPPER=false",
                 "eclipselink.application-location=target", "spring.ai.openai.api-key=test-only"})
-@ActiveProfiles("Ai")
+@ActiveProfiles({"Ai", "test"})
 @org.springframework.test.annotation.DirtiesContext(classMode = org.springframework.test.annotation.DirtiesContext.ClassMode.AFTER_CLASS)
 class BlogClientTest {
     @LocalServerPort int port;

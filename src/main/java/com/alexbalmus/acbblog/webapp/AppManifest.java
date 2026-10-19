@@ -70,11 +70,16 @@ public class AppManifest
                     id.getFullIdentityString().contains("HelloWorldObject")
                             ? Grant.CHANGE
                             : Grant.NONE)
-            .addRole("default_role", id->
-                    id.logicalType().namespace().startsWith("causeway.applib")
-                            || id.logicalType().namespace().startsWith("causeway.security")
-                            ? Grant.CHANGE
-                            : Grant.NONE)
+            .addRole("default_role", id -> {
+                // Every signed-in user needs a readable Wicket landing page.
+                // READ keeps its create/change/delete actions unavailable.
+                if (id.logicalType().logicalName().equals("blog.BlogsHomePage")) {
+                    return Grant.READ;
+                }
+                return id.logicalType().namespace().startsWith("causeway.applib")
+                        || id.logicalType().namespace().startsWith("causeway.security")
+                        ? Grant.CHANGE : Grant.NONE;
+            })
             .addRole("fixtures_role", id->
                     id.logicalType().namespace().startsWith("causeway.testing.fixtures")
                             ? Grant.CHANGE

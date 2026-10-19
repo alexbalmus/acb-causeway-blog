@@ -1,0 +1,35 @@
+name: Regression tests
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  regression:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '25'
+          cache: maven
+      - name: Java, Angular, HTMX and Wicket regression suite
+        run: mvn --batch-mode --no-transfer-progress package "-Dplaywright.install.args=install --with-deps chromium"
+      - name: Preserve test reports and browser failure evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: regression-reports
+          retention-days: 14
+          path: |
+            target/surefire-*-reports/
+            target/failsafe-reports/
+            webclient/coverage/
+            webclient/playwright-report/
+            webclient/test-results/

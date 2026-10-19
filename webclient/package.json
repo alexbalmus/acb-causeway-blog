@@ -6,7 +6,11 @@
     "start": "ng serve --proxy-config proxy.conf.json",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
-    "test": "ng test"
+    "test": "ng test",
+    "test:ci": "node scripts/test-ci.mjs",
+    "test:e2e": "playwright test",
+    "test:e2e:wicket": "playwright test wicket.spec.ts",
+    "test:e2e:report": "playwright show-report"
   },
   "prettier": {
     "printWidth": 100,
@@ -39,6 +43,7 @@
     "@angular/build": "^20.3.32",
     "@angular/cli": "^20.3.32",
     "@angular/compiler-cli": "^20.3.0",
+    "@playwright/test": "1.64.1",
     "@types/jasmine": "~5.1.0",
     "jasmine-core": "~5.9.0",
     "karma": "~6.4.0",

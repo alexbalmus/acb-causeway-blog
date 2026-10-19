@@ -25,6 +25,10 @@
         <causeway.version>4.0.0-M2</causeway.version>
         <spring-ai.version>2.0.0</spring-ai.version>
         <jte.version>3.2.4</jte.version>
+        <maven.test.skip>false</maven.test.skip>
+        <skipTests>${maven.test.skip}</skipTests>
+        <frontend.node.version>v24.14.0</frontend.node.version>
+        <playwright.install.args>install chromium</playwright.install.args>
 
         <!-- https://stackoverflow.com/questions/38983934/cannot-get-maven-project-version-property-in-a-spring-application-with-value/38983935#38983935 -->
         <resource.delimiter>^</resource.delimiter>
@@ -101,6 +105,63 @@
                         </dependency>
                     </requiresUnpack>
                 </configuration>
+            </plugin>
+            <!-- Keep after Spring Boot: browser tests require the repackaged executable JAR. -->
+            <plugin>
+                <groupId>com.github.eirslett</groupId>
+                <artifactId>frontend-maven-plugin</artifactId>
+                <version>2.0.1</version>
+                <configuration>
+                    <workingDirectory>${project.basedir}/webclient</workingDirectory>
+                    <installDirectory>${project.build.directory}/frontend</installDirectory>
+                    <nodeVersion>${frontend.node.version}</nodeVersion>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>install-frontend-toolchain</id>
+                        <phase>prepare-package</phase>
+                        <goals><goal>install-node-and-npm</goal></goals>
+                    </execution>
+                    <execution>
+                        <id>install-client-dependencies</id>
+                        <phase>prepare-package</phase>
+                        <goals><goal>npm</goal></goals>
+                        <configuration><arguments>ci</arguments></configuration>
+                    </execution>
+                    <execution>
+                        <id>install-test-browser</id>
+                        <phase>prepare-package</phase>
+                        <goals><goal>npm</goal></goals>
+                        <configuration>
+                            <arguments>exec -- playwright ${playwright.install.args}</arguments>
+                            <skip>${skipTests}</skip>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>angular-tests</id>
+                        <phase>prepare-package</phase>
+                        <goals><goal>npm</goal></goals>
+                        <configuration>
+                            <arguments>run test:ci</arguments>
+                            <skip>${skipTests}</skip>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>build-angular-client</id>
+                        <phase>prepare-package</phase>
+                        <goals><goal>npm</goal></goals>
+                        <configuration><arguments>run build</arguments></configuration>
+                    </execution>
+                    <execution>
+                        <id>browser-tests</id>
+                        <phase>package</phase>
+                        <goals><goal>npm</goal></goals>
+                        <configuration>
+                            <arguments>run test:e2e</arguments>
+                            <skip>${skipTests}</skip>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>

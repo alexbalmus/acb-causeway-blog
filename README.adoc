@@ -83,20 +83,29 @@ also adjust `spring.servlet.multipart.max-file-size` and `max-request-size` when
 raising the byte limit. These limits do not change the existing REST upload API.
 The repository's loopback-only demo configuration remains in place.
 
+See link:TESTING.md[TESTING.md] for the automated regression suite, local commands,
+coverage map, failure reports and CI workflow.
+
 The Java suite covers native authentication, realm grants, ownership, CSRF,
-session expiry, uploads and AI behavior. Optional browser regression checks also
-exercise Angular and Wicket alongside JTE. After `mvn package` and the Angular
-production build, run from the repository root:
+session expiry, uploads and AI behavior. Browser regression tests exercise
+Angular and Wicket alongside JTE, on desktop and mobile Chromium. Run all Java,
+Angular and browser tests with one command:
 
 [source,shell]
 ----
-npm install --prefix target/browser --no-save playwright
-node src/test/browser/blog-client.mjs
+mvn package
 ----
 
-The browser check uses a temporary in-memory app on port 18080 and an Angular
-test server on port 14200, and stops both afterward. Set `CHROME_BIN` if Chrome
-is not installed at the default Windows location. Screenshots are saved in `target/`.
+Maven installs a local Node/npm toolchain, client dependencies and Chromium,
+builds Angular, and starts the browser tests after packaging the executable JAR.
+Test failures fail the Maven build. Use `mvn package -DskipTests` to build without
+tests. Linux browser system dependencies and focused test commands are documented
+in link:TESTING.md[TESTING.md].
+
+The suite uses a temporary in-memory app on port 18080 and an Angular test
+server on port 14200, and stops both afterward. Failure screenshots, videos and
+traces are saved in `webclient/test-results/`; the HTML report is in
+`webclient/playwright-report/`.
 
 == Angular web client
 
