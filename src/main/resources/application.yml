@@ -51,6 +51,23 @@ causeway:
       themes:
         initial: Litera
         show-chooser: true
+        enabled:
+          - Cerulean
+          - Cosmo
+          - Cyborg
+          - Darkly
+          - Flatly
+          - Journal
+          - Litera
+          - Lumen
+          - Sandstone
+          - Simplex
+          - Slate
+          - Spacelab
+          - Superhero
+          - United
+          - Yeti
+
     graphql:
       api-variant: query_with_mutations_non_spec_compliant
       authentication:
